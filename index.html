@@ -165,15 +165,13 @@ select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius
 [data-mode="shop"] header{padding-top:14px;background:repeating-linear-gradient(-45deg,var(--accent) 0 10px,var(--fg) 10px 20px) top/100% 6px no-repeat}
 .beta{display:inline-block;vertical-align:middle;margin-left:6px;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:4px;background:var(--warn-bg);color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn);white-space:nowrap}
 .tdsErr{margin:0;font-size:14px;color:var(--crit);padding:8px 12px;border-left:3px solid var(--crit);background:var(--crit-bg);border-radius:0 6px 6px 0}
-.unlockCard{gap:14px;overflow-y:auto}
-.unlockBody{display:grid;gap:8px;font-size:15px}
-.unlockBody p{margin:0}
-.unlockBody .sample{font-family:var(--display);font-weight:600;font-size:22px;color:var(--accent)}
 a.acceptBtn{text-align:center;text-decoration:none;display:block}
-#unlockCode{font:inherit;font-family:var(--mono);font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);flex:1 1 140px;min-width:0}
-#unlockCode:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
-.unlockGo{font:inherit;font-weight:600;padding:10px 16px;border:1px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);cursor:pointer}
-.unlockGo:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tipjar{display:grid;gap:10px;padding:18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent-soft)}
+.tipjar h2{margin:0;font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05}
+.tipjar p{margin:0;max-width:62ch}
+.tipBtn{justify-self:start;font-weight:600;font-size:16px;padding:12px 20px;border-radius:8px;background:var(--accent);color:var(--accent-ink);text-decoration:none}
+.tipBtn:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.tipSoon{font-size:14px;color:var(--muted)}
 .linkbtn{font:inherit;font-size:13px;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;cursor:pointer}
 .linkbtn:focus-visible,.acceptBtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);background:rgba(10,14,16,.72)}
@@ -198,8 +196,8 @@ body.locked{overflow:hidden}
 <body>
 <div class="wrap">
   <div class="modebar" role="group" aria-label="Language">
-    <button type="button" id="mode-pro" aria-pressed="true">Professional<small>Free</small></button>
-    <button type="button" id="mode-shop" aria-pressed="false">Uncle Roy's version<small id="shopSub">for supporters · $1</small></button>
+    <button type="button" id="mode-pro" aria-pressed="true">Professional</button>
+    <button type="button" id="mode-shop" aria-pressed="false">Uncle Roy's version</button>
   </div>
   <header>
     <div class="eyebrow" data-shop="Goo · Gunk · The stuff that bites">Resins · Pastes · Hardeners</div>
@@ -318,31 +316,16 @@ body.locked{overflow:hidden}
     </section>
   </div>
 
+  <section class="tipjar" id="tipJar" aria-labelledby="tipTitle">
+    <h2 id="tipTitle" data-shop="Shout Uncle Roy a coffee">Tip jar</h2>
+    <p data-shop="Free app, no catch, both versions. If it's saved your arse or a bucket of resin, chuck a few bucks in the jar. Unlocks nothing except Uncle Roy's gratitude.">This app is free, both versions, and will stay that way. If it has saved you a bucket of resin or a bad afternoon, a tip helps keep it going. Tips are voluntary and don't unlock anything.</p>
+    <a class="tipBtn" id="tipLink" href="#" target="_blank" rel="noopener" data-shop="Chuck a few bucks in">Leave a tip</a>
+    <p class="tipSoon" id="tipSoon" hidden data-shop="Jar's not open yet. Uncle Roy's still finding it.">The tip jar opens soon.</p>
+  </section>
+
   <p class="disclaimer"><span class="lbl"><span data-shop="About these figures">About these figures</span> <button type="button" class="info" data-for="aboutInfo" aria-expanded="false" aria-label="More information">i</button></span></p>
   <p class="disclaimer infoText" id="aboutInfo" hidden data-shop="This is a calculator, not your mum. The TDS outranks it, the supervisor outranks the TDS, and Claire at HR outranks everyone. Cup test anything new before you glass a hull with it, and wear the bloody gloves. MEKP in the eye means hospital, not a funny story.">Ratios are typical workshop values for promoted resins. Gel times come from a model fitted to published data sheet figures; figures marked Estimate have no published figure behind them yet. The supplier's TDS always takes priority, and the hardener a product's TDS names is the one to use. Run a cup test on any new batch before committing a part.</p>
   <p class="disclaimer"><button type="button" class="linkbtn" id="openTerms">Disclaimer and conditions of use</button></p>
-</div>
-
-<div class="modal" id="unlock" role="dialog" aria-modal="true" aria-labelledby="unlockTitle" hidden>
-  <div class="modalCard unlockCard">
-    <h2 id="unlockTitle">Uncle Roy's version for supporters</h2>
-    <div class="unlockBody">
-      <p>The same calculator, with Uncle Roy doing the talking: shop floor language, dark humour and the odd insult. Same numbers, worse manners.</p>
-      <p class="sample">"Employee of the month my arse."</p>
-      <p>The Professional version stays free. A one-off A$1 unlocks Uncle Roy's version and helps keep the app going.</p>
-    </div>
-    <a class="acceptBtn" id="payLink" href="#" target="_blank" rel="noopener">Support with A$1</a>
-    <p class="modalNote" id="payPending" hidden>Supporter payments open soon.</p>
-    <div class="field">
-      <label class="label" for="unlockCode">Already supported? <span class="hint">enter the code from your payment confirmation</span></label>
-      <div class="row">
-        <input type="text" id="unlockCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Unlock code">
-        <button type="button" class="unlockGo" id="unlockGo">Unlock</button>
-      </div>
-      <p class="tdsErr" id="unlockErr" hidden>That code doesn't match. It's shown on the confirmation page after your payment.</p>
-    </div>
-    <button type="button" class="linkbtn" id="unlockClose">Not now</button>
-  </div>
 </div>
 
 <div class="modal" id="terms" role="dialog" aria-modal="true" aria-labelledby="termsTitle" hidden>
@@ -361,10 +344,12 @@ body.locked{overflow:hidden}
       <h3>5. Your responsibility</h3>
       <p>You decide what to mix, how much and when. Check every figure before you use it. You are responsible for your work, for its quality, and for complying with work health and safety laws and your employer's procedures.</p>
       <h3>6. Uncle Roy's version</h3>
-      <p>Uncle Roy's version is an optional version for supporters, unlocked by a one-off payment of A$1. It changes the wording only, not the calculations. Its language is coarse and humorous and is not an instruction to do anything unsafe. The unlock is saved on the device and browser where the code was entered. Keep your unlock code so you can enter it again after clearing your browser data or on another device.</p>
+      <p>Uncle Roy's version is free and changes the wording only, not the calculations. Its language is coarse and humorous and is not an instruction to do anything unsafe.</p>
       <h3>7. Limits of liability</h3>
-      <p>To the extent permitted by law, the developer is not liable for any loss, damage, injury, scrapped work, rework or delay arising from use of, or reliance on, this app. Nothing in these conditions excludes, restricts or modifies any right or remedy you have under the Australian Consumer Law that cannot lawfully be excluded. Where liability can lawfully be limited, it is limited, at the developer's option, to supplying the app again or refunding the price paid.</p>
-      <h3>8. Product names</h3>
+      <p>The app is provided free of charge and as is. To the extent permitted by law, the developer is not liable for any loss, damage, injury, scrapped work, rework or delay arising from use of, or reliance on, this app. Nothing in these conditions excludes, restricts or modifies any right or remedy you have under the Australian Consumer Law that cannot lawfully be excluded. Where liability can lawfully be limited, it is limited, at the developer's option, to supplying the app again or refunding any amount paid.</p>
+      <h3>8. Tips</h3>
+      <p>Tips are voluntary gifts towards developing the app. A tip doesn't buy any product, feature or service, and the app works the same whether you tip or not.</p>
+      <h3>9. Product names</h3>
       <p>Product and brand names in this app belong to their owners and are used only to identify those products. Their use does not mean the owners endorse or are connected with this app.</p>
     </div>
     <button type="button" class="acceptBtn" id="acceptTerms" data-shop="Got it. I read it. Mostly.">I understand and accept</button>
@@ -700,38 +685,19 @@ function drawChart(p,t,rh,minT,pct){
 
 const staticEls=[...document.querySelectorAll("[data-shop]")];
 staticEls.forEach(el=>el.dataset.pro=el.innerHTML);
-// Uncle Roy's version: one-off A$1 supporter unlock.
-// PAY_URL: the Stripe Payment Link. UNLOCK_CODE: shown on that link's confirmation page.
-const PAY_URL="";
-const UNLOCK_CODE="KICKER";
-const UNLOCK_KEY="lcc-uncle-roy";
-let unlockedMem=false;
-function isUnlocked(){if(unlockedMem)return true;try{return localStorage.getItem(UNLOCK_KEY)==="1"}catch(e){return false}}
-function setUnlocked(){unlockedMem=true;try{localStorage.setItem(UNLOCK_KEY,"1")}catch(e){}}
-function openUnlock(){
-  $("payLink").hidden=!PAY_URL;$("payPending").hidden=!!PAY_URL;if(PAY_URL)$("payLink").href=PAY_URL;
-  $("unlockErr").hidden=true;$("unlockCode").value="";
-  $("unlock").hidden=false;document.body.classList.add("locked");
-}
-function closeUnlock(){$("unlock").hidden=true;document.body.classList.remove("locked")}
-function tryUnlock(){
-  const v=$("unlockCode").value.trim().toUpperCase();
-  if(v&&v===UNLOCK_CODE){setUnlocked();closeUnlock();state.mode="shop";applyMode();buildProducts();buildHardeners();render()}
-  else $("unlockErr").hidden=false;
-}
-$("unlockGo").addEventListener("click",tryUnlock);
-$("unlockCode").addEventListener("keydown",e=>{if(e.key==="Enter")tryUnlock()});
-$("unlockClose").addEventListener("click",closeUnlock);
+// Tip jar: paste the Stripe Payment Link here (set to "customers choose what to pay").
+const TIP_URL="";
+function setupTip(){$("tipLink").hidden=!TIP_URL;$("tipSoon").hidden=!!TIP_URL;if(TIP_URL)$("tipLink").href=TIP_URL}
+setupTip();
 function applyMode(){
-  if(state.mode==="shop"&&!isUnlocked())state.mode="pro";
-  $("shopSub").textContent=isUnlocked()?"for supporters · thanks":"for supporters · $1";
+
   const shop=shopMode();
   document.documentElement.dataset.mode=state.mode;
   staticEls.forEach(el=>el.innerHTML=shop?el.dataset.shop:el.dataset.pro);
   $("mode-pro").setAttribute("aria-pressed",String(!shop));$("mode-shop").setAttribute("aria-pressed",String(shop));
   quipLevel=null;
 }
-for(const m of ["pro","shop"])$("mode-"+m).addEventListener("click",()=>{if(m==="shop"&&!isUnlocked()){openUnlock();return}state.mode=m;applyMode();buildProducts();buildHardeners();render()});
+for(const m of ["pro","shop"])$("mode-"+m).addEventListener("click",()=>{state.mode=m;applyMode();buildProducts();buildHardeners();render()});
 for(const c of ["resin","paste"])$("tab-"+c).addEventListener("click",()=>{
   if(state.cat===c)return;state.cat=c;
   if(P[state.p].cat!==c)state.p=Object.keys(P).find(k=>P[k].cat===c);

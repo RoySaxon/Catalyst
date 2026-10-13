@@ -142,20 +142,15 @@ ok("MMA offers its own activators only", run({ p: "mma" }).hard.every(h => h.sta
   ok("Fixed-ratio explanation sits behind an info button", !$("ratioInfoBtn").hidden && $("ratioInfo").hidden);
 }
 
-// Uncle Roy's version: locked until the supporter code is entered; Professional stays free
+// Uncle Roy's version is free; tip jar is visible and unlocks nothing
 {
   const mode = () => d.documentElement.dataset.mode;
   $("mode-shop").click();
-  ok("Uncle Roy's version is locked by default", $("unlock").hidden === false && mode() === "pro");
-  $("unlockCode").value = "wrong"; $("unlockGo").click();
-  ok("Wrong code is rejected", !$("unlockErr").hidden && mode() === "pro");
-  $("unlockCode").value = "kicker"; $("unlockGo").click();
-  ok("Correct code unlocks Uncle Roy's version", $("unlock").hidden && mode() === "shop" && d.querySelector("h1").textContent.includes("Bloody Kicker"));
+  ok("Uncle Roy's version switches on freely", mode() === "shop" && d.querySelector("h1").textContent.includes("Bloody Kicker"));
+  ok("Tip jar is on the page, not hidden", !$("tipJar").hidden && !$("tipJar").closest("[hidden]"));
+  ok("No unlock step remains", !d.getElementById("unlock"));
   $("mode-pro").click();
-  ok("Professional stays free and switchable", mode() === "pro");
-  $("mode-shop").click();
-  ok("Unlock is remembered", mode() === "shop" && $("unlock").hidden);
-  $("mode-pro").click();
+  ok("Back to Professional", mode() === "pro");
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);
