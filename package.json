@@ -1,0 +1,6 @@
+{
+  "name": "catalyst",
+  "private": true,
+  "scripts": { "test": "node tests/check.js" },
+  "devDependencies": { "jsdom": "24.1.3" }
+}

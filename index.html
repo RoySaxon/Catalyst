@@ -284,56 +284,56 @@ const C={
 /* ---------- Products ----------
    gel = minutes to gel, 100 g at 25 °C with refPct of a standard hardener.  src = where that figure comes from. */
 const P={
-  ortho:{cat:"resin",name:"Ortho laminating resin",ex:"Crystic, Polylite, Synolite, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:18,refPct:1,src:"Easy Composites GP resin TDS",hard:MEKP_POLY,def:"m50",
+  ortho:{dens:1.1,cat:"resin",name:"Ortho laminating resin",ex:"Crystic, Polylite, Synolite, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:17,refPct:1,src:"Easy Composites GP resin TDS",hard:MEKP_POLY,def:"m50",
     note:"Hand lay-up and spray-up. Don't drop below 0.8% to buy time; the laminate stays green and soft.",
     shop:"Bread and butter. Don't go under 0.8% to buy time; it stays green and you get to explain why the hull's bendy."},
-  iso:{cat:"resin",name:"Iso laminating resin",ex:"Crystic, Polylite, Aropol, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:20,refPct:1,hard:MEKP_POLY,def:"m50",
+  iso:{dens:1.1,cat:"resin",name:"Iso laminating resin",ex:"Crystic, Polylite, Aropol, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:20,refPct:1,hard:MEKP_POLY,def:"m50",
     note:"Better water and chemical resistance than ortho. Usual choice for the skin coat behind gelcoat below the waterline.",
     shop:"Ortho's posh cousin. Takes water better, so it goes behind the gelcoat below the waterline."},
-  dcpd:{cat:"resin",name:"DCPD laminating resin",ex:"Polylite, Synolite, Aropol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:22,refPct:1,hard:MEKP_POLY,def:"m50",
+  dcpd:{dens:1.1,cat:"resin",name:"DCPD laminating resin",ex:"Polylite, Synolite, Aropol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:22,refPct:1,hard:MEKP_POLY,def:"m50",
     note:"Low shrink and fast wet-out, good for cosmetics. More brittle than ortho, so keep it out of structural layers.",
     shop:"Wets out fast, barely shrinks, snaps like a biscuit. Cosmetic layers only, not the stuff holding the boat together."},
-  inf:{cat:"resin",name:"Infusion resin",ex:"Crystic, Synolite, Polylite infusion grades",kind:"mekp",curve:C.inf,min:0.8,max:2.0,minT:16,gel:55,refPct:1,src:"Easy Composites IP2 TDS",hard:["lpt","m50","n9h","kp9","mec"],def:"lpt",
+  inf:{dens:1.1,cat:"resin",name:"Infusion resin",ex:"Crystic, Synolite, Polylite infusion grades",kind:"mekp",curve:C.inf,min:0.8,max:2.0,minT:16,gel:55,refPct:1,src:"Easy Composites IP2 TDS",hard:["lpt","m50","n9h","kp9","mec"],def:"lpt",
     note:"Set gel time against your fill time with margin to spare. Cup test from the drum you're feeding before you open the line.",
     shop:"Know your fill time and give yourself slack. Gel it halfway up the part and enjoy grinding out a dry patch the size of a car bonnet."},
-  ve:{cat:"resin",name:"Vinyl ester",ex:"Derakane, Atlac, Dion, Crystic VE",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:30,refPct:1,hard:MEKP_VE,def:"n925h",
+  ve:{dens:1.05,cat:"resin",name:"Vinyl ester",ex:"Derakane, Atlac, Dion, Crystic VE",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:30,refPct:1,hard:MEKP_VE,def:"n925h",
     note:"Fussier in the cold than polyester and prone to foaming with high-H₂O₂ MEKP. Use the grade the TDS names.",
     shop:"Hates the cold, foams if you look at it funny. Use the kicker the TDS names, not whatever's closest to your hand."},
-  gelc:{cat:"resin",name:"Gelcoat",ex:"Crystic, Polycor, Norpol, Maxguard",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:32,refPct:1,hard:MEKP_GEL,def:"n925h",
+  gelc:{dens:1.25,cat:"resin",name:"Gelcoat",ex:"Crystic, Polycor, Norpol, Maxguard",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:32,refPct:1,hard:MEKP_GEL,def:"n925h",
     note:"Never below 1.2%. Under-catalysed gelcoat stays soft, prints through and blisters. High-H₂O₂ MEKP causes porosity.",
     shop:"Never under 1.2%. Soft gelcoat blisters, prints through and comes back to haunt you at the warranty claim."},
-  flow:{cat:"resin",name:"Flowcoat / topcoat",ex:"Crystic, Polycor, Norpol",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
+  flow:{dens:1.25,cat:"resin",name:"Flowcoat / topcoat",ex:"Crystic, Polycor, Norpol",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
     note:"Waxed to cure tack-free in air. The wax layer has to be sanded off before anything bonds to it.",
     shop:"Waxed so it cures in air. Sand the wax off before you stick anything to it, or it falls off and you look stupid."},
-  epoxy:{cat:"resin",name:"Epoxy laminating",ex:"West System, Gurit Ampreg, Sicomin, Pro-Set",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
+  epoxy:{dens:1.15,cat:"resin",name:"Epoxy laminating",ex:"West System, Gurit Ampreg, Sicomin, Pro-Set",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
     note:"Weigh or pump, never eyeball. Extra hardener doesn't speed epoxy up; it leaves the cure soft. Change hardener speed instead.",
     shop:"Weigh it or pump it. Never eyeball it. More hardener isn't faster, it's just shit."},
 
-  bog:{cat:"paste",name:"Polyester body filler",ex:"U-Pol, Isopon P38, 3M",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:3.2,refPct:2,src:"Mipa P50 TDS",hard:["bpo"],def:"bpo",
+  bog:{dens:1.5,cat:"paste",name:"Polyester body filler",ex:"U-Pol, Isopon P38, 3M",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:3.2,refPct:2,src:"Mipa P50 TDS",hard:["bpo"],def:"bpo",
     note:"Mix until the colour is even. Any streak is an uncured spot.",
     shop:"Mix till it's one colour. Streaks are soft spots, and soft spots are callbacks."},
-  easy:{cat:"paste",name:"Lightweight easy-sand filler",ex:"U-Pol, Isopon, 3M lightweight grades",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
+  easy:{dens:0.9,cat:"paste",name:"Lightweight easy-sand filler",ex:"U-Pol, Isopon, 3M lightweight grades",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
     note:"Microballoon filler that sands easily. Porous, so seal it before paint or gelcoat goes on.",
     shop:"Sands like a dream, drinks everything like a sponge. Seal it before paint."},
-  fibre:{cat:"paste",name:"Fibre-reinforced filler",ex:"Isopon P40, U-Pol Fibral",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
+  fibre:{dens:1.4,cat:"paste",name:"Fibre-reinforced filler",ex:"Isopon P40, U-Pol Fibral",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
     note:"Strand-filled for bridging holes and building thickness. Fold the hardener through rather than whipping it.",
     shop:"Hairy bog. Fold the cream through, don't whip it like you're making a pavlova."},
-  gpaste:{cat:"paste",name:"Gelcoat repair paste",ex:"Crystic, Polycor, thickened gelcoat",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
+  gpaste:{dens:1.3,cat:"paste",name:"Gelcoat repair paste",ex:"Crystic, Polycor, thickened gelcoat",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
     note:"For chips and edges. Cure it under film or wax solution, or the surface stays tacky.",
     shop:"For chips and dings. Cover it with film or wax or it stays tacky until the heat death of the universe."},
-  pbond:{cat:"paste",name:"Polyester bonding paste",ex:"Crystic, Polylite, Norpol core bonds",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:15,gel:40,refPct:1,hard:MEKP_POLY,def:"m50",
+  pbond:{dens:1.3,cat:"paste",name:"Polyester bonding paste",ex:"Crystic, Polylite, Norpol core bonds",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:15,gel:40,refPct:1,hard:MEKP_POLY,def:"m50",
     note:"For core and secondary bonding. Grind and wipe the bond line; it won't stick to waxed or contaminated laminate.",
     shop:"Grind it, wipe it, then bond it. It won't stick to wax, dust or optimism."},
-  vbond:{cat:"paste",name:"Vinyl ester bonding paste",ex:"Derakane, Atlac, Crystic VE pastes",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:45,refPct:1,hard:MEKP_VE,def:"n925h",
+  vbond:{dens:1.3,cat:"paste",name:"Vinyl ester bonding paste",ex:"Derakane, Atlac, Crystic VE pastes",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:45,refPct:1,hard:MEKP_VE,def:"n925h",
     note:"Tougher than polyester paste for stringers and bulkheads. Same foaming caution as vinyl ester resin.",
     shop:"The tough stuff for stringers and bulkheads. Foams like vinyl ester does, because it is vinyl ester."},
-  ua:{cat:"paste",name:"Crestomer 1152PA",ex:"Scott Bader urethane acrylate adhesive",kind:"mekp",curve:C.fixed2,min:2,max:2,minT:15,gel:50,refPct:2,src:"Crestomer 1152PA TDS",ratioSrc:1,hard:["m50","kp9","m50r"],def:"m50",
+  ua:{dens:1.1,cat:"paste",name:"Crestomer 1152PA",ex:"Scott Bader urethane acrylate adhesive",kind:"mekp",curve:C.fixed2,min:2,max:2,minT:15,gel:50,refPct:2,src:"Crestomer 1152PA TDS",ratioSrc:1,hard:["m50","kp9","m50r"],def:"m50",
     note:"Fixed at 2% MEKP. Work between 18 and 25 °C and never below 15 °C.",
     shop:"2%. Between 18 and 25 °C. Never below 15. It's not complicated."},
-  mma:{cat:"paste",name:"MMA structural adhesive",ex:"Crestabond, Plexus, SikaFast",kind:"mma",minT:18,hard:["mma5","mmac"],def:"mma5",
+  mma:{dens:1.0,cat:"paste",name:"MMA structural adhesive",ex:"Crestabond, Plexus, SikaFast",kind:"mma",minT:18,hard:["mma5","mmac"],def:"mma5",
     note:"Dispense through the static mixer and throw the first bead away. Clamp within the working time and leave it until fixture.",
     shop:"Bin the first squirt out of the nozzle. Clamp it in time, then leave it alone. Yes, you."},
-  fair:{cat:"paste",name:"Epoxy fairing compound",ex:"West 105 with 407 or 410, Gurit fairing",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
+  fair:{dens:1.15,cat:"paste",name:"Epoxy fairing compound",ex:"West 105 with 407 or 410, Gurit fairing",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
     note:"Mix resin and hardener fully before adding filler. Thicken to peanut-butter consistency for vertical work.",
     shop:"Resin and hardener mixed properly first, then the filler. Peanut butter for vertical, unless you enjoy sweeping it off the floor."}
 };
@@ -389,7 +389,7 @@ const span=g=>`${dur(g*0.75)} to ${dur(g*1.3)}`;
 function buildProducts(){
   for(const c of ["resin","paste"])$("tab-"+c).setAttribute("aria-selected",String(state.cat===c));
   $("products").innerHTML=Object.entries(P).filter(([,p])=>p.cat===state.cat).map(([k,p])=>
-    `<label><input type="radio" name="prod" id="prod-${k}" value="${k}"${k===state.p?" checked":""}><div class="tags">${(p.src||p.kind==="epoxy"||p.kind==="mma")?`<span class="tag data">${T("TDS-based","Checked")}</span>`:`<span class="tag est">${T("Estimated times","Guesswork")}</span>`}</div><span>${p.name}</span><small>${p.ex}</small></label>`).join("");
+    `<label><input type="radio" name="prod" id="prod-${k}" value="${k}"${k===state.p?" checked":""}><div class="tags">${(p.src||p.kind==="epoxy"||p.kind==="mma")?`<span class="tag data">${T("TDS-based","Checked")}</span>`:`<span class="tag est">${T("Estimated times","Guesswork")}</span>`}</div><span>${p.name}</span><small>${p.ex}${p.src?`. ${T("Times calibrated to","Times off the")} ${p.src}`:""}</small></label>`).join("");
 }
 function buildHardeners(){
   const p=P[state.p],cur=hardOf(state.p);
@@ -413,8 +413,9 @@ function render(){
   $("eplLabel").innerHTML=(kind==="mma"?T("Working time on the data sheet","Working time off the sheet"):T("Pot life on the data sheet","Pot life off the sheet"))+' <span class="hint">minutes at 25 °C</span>';
 
   const b=Math.max(0,parseFloat(state.batch)||0);
-  const massG=state.unit==="g"?b:state.unit==="kg"?b*1000:b*1100;
-  const volML=state.unit==="L"?b*1000:massG/1.15;
+  const dens=p.dens||1.1;
+  const massG=state.unit==="g"?b:state.unit==="kg"?b*1000:b*1000*dens;
+  const volML=state.unit==="L"?b*1000:massG/dens;
 
   const notes=[];let level="good",label=kind==="mma"?T("Good to bond","Glue it"):kind==="bpo"?T("Good to fill","Slap it on"):T("Good to lay up","Crack on");
   const bump=(lv,lab)=>{const r={good:0,warn:1,crit:2};if(r[lv]>r[level]){level=lv;label=lab}};
@@ -494,9 +495,10 @@ function render(){
     if(td.gel)notes.push(["",T(`Gel time worked out from your data sheet: ${fmt(td.gel,0)} min at ${fmt(td.t,0)} °C${td.pct?` and ${fmt(td.pct,2)}%`:""}, for a 100 g cup.`,`Gel time off your sheet's ${fmt(td.gel,0)} min at ${fmt(td.t,0)} °C. If the sheet's wrong, blame the sheet.`)]);
     drawChart(p,t,rh,minT,pct);
   }
-  if(kind==="epoxy"&&!custom&&state.unit!=="L")notes.push(["",T("This hardener is measured by volume, so the weight you entered is converted at an assumed 1.15 g/ml. Enter the batch in litres, or use the pumps, for an exact split.","This one goes by volume, so your weight got converted at a guessed 1.15 g/ml. Put it in litres or use the pumps if you want it spot on.")]);
-  if(kind==="mma"&&state.unit!=="L")notes.push(["",T("Converted to volume at an assumed 1.15 g/ml. Enter the batch in litres for an exact figure.","Converted to volume at a guessed 1.15 g/ml. Use litres if you want it spot on.")]);
-  if(peroxide&&state.unit==="L")notes.push(["",T("Litres are converted to weight at an assumed 1.1 kg/L, typical for polyester. Weigh the batch if you can; the catalyst ratio is by weight.","Litres got turned into kilos at a guessed 1.1 kg/L. Kicker goes by weight, so weigh the bloody thing if you can.")]);
+  if(kind==="epoxy"&&!custom&&state.unit!=="L")notes.push(["",T(`This hardener is measured by volume, so the weight you entered is converted at an assumed ${fmt(dens,2)} kg/L. Enter the batch in litres, or use the pumps, for an exact split.`,`This one goes by volume, so your weight got converted at a guessed ${fmt(dens,2)} kg/L. Put it in litres or use the pumps if you want it spot on.`)]);
+  if(kind==="mma"&&state.unit!=="L")notes.push(["",T(`Converted to volume at an assumed ${fmt(dens,2)} kg/L. Enter the batch in litres for an exact figure.`,`Converted to volume at a guessed ${fmt(dens,2)} kg/L. Use litres if you want it spot on.`)]);
+  if(peroxide&&state.unit==="L")notes.push(["",T(`Litres are converted to weight at an assumed ${fmt(dens,2)} kg/L, typical for this product type. Weigh the batch if you can; the catalyst ratio is by weight.`,`Litres got turned into kilos at a guessed ${fmt(dens,2)} kg/L. Kicker goes by weight, so weigh the bloody thing if you can.`)]);
+  if(!(b>0)){html=`<div style="grid-column:1/-1"><dt>${T("Batch","How much")}</dt><dd>${T("Enter a batch size above zero","Type in how much you're mixing, genius")}</dd></div>`;bump("warn",T("Batch size needed","How much, though?"))}
   notes.unshift(["",T(p.note,p.shop)]);
   $("amounts").innerHTML=html;
   $("notes").innerHTML=notes.map(([c,n])=>`<li class="${c}">${n}</li>`).join("");
@@ -514,7 +516,7 @@ function drawChart(p,t,rh,minT,pct){
   let s=`<rect x="${X(x0)}" y="${T}" width="${Math.max(0,X(Math.max(x0,Math.min(x1,minT)))-X(x0))}" height="${H2-T-B}" fill="var(--crit-bg)"/>`;
   for(let v=0;v<=yMax;v+=1)s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" font-family="JetBrains Mono,monospace" fill="var(--muted)">${v}%</text>`;
   for(let v=10;v<=40;v+=10)s+=`<text x="${X(v)}" y="${H2-8}" text-anchor="middle" font-size="10" font-family="JetBrains Mono,monospace" fill="var(--muted)">${v}°</text>`;
-  let d="";for(let v=x0;v<=x1;v+=0.5)d+=(d?"L":"M")+X(v).toFixed(1)+" "+Y(ratioAt(p,v,0)).toFixed(1);
+  let d="";for(let v=x0;v<=x1;v+=0.5)d+=(d?"L":"M")+X(v).toFixed(1)+" "+Y(ratioAt(p,v,rh)).toFixed(1);
   s+=`<path d="${d}L${X(x1)} ${Y(0)}L${X(x0)} ${Y(0)}Z" fill="var(--accent)" fill-opacity=".12"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
   const tc=Math.min(x1,Math.max(x0,t));
   s+=`<line x1="${X(tc)}" x2="${X(tc)}" y1="${T}" y2="${Y(0)}" stroke="var(--fg)" stroke-opacity=".35" stroke-dasharray="3 3"/><circle cx="${X(tc)}" cy="${Y(Math.min(yMax,pct))}" r="6" fill="var(--surface)" stroke="var(--fg)" stroke-width="2.5"/>`;
