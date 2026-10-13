@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laminator's Catalyst Calculator</title>
+<meta name="description" content="Catalyst ratio, amounts and gel or pot life for resins and pastes, adjusted for temperature and humidity.">
+<meta name="theme-color" content="#1c2225">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Catalyst">
+<style>
+@font-face{font-family:"Saira Condensed";font-weight:600;font-display:swap;src:url(fonts/saira-condensed-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Saira Condensed";font-weight:700;font-display:swap;src:url(fonts/saira-condensed-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Sans 3";font-weight:400;font-display:swap;src:url(fonts/source-sans-3-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Source Sans 3";font-weight:600;font-display:swap;src:url(fonts/source-sans-3-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-weight:500;font-display:swap;src:url(fonts/jetbrains-mono-latin-500-normal.woff2) format("woff2")}
+/* base reset (the artifact host supplied this before) */
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* Layout: workbench card. Live result panel first on phones, right-hand sticky column on wide screens. */
+:root{
+  --bg:#e9eceb; --surface:#ffffff; --fg:#1c2225; --muted:#5a666b; --line:#d2d8d7;
+  --accent:#c2700c; --accent-ink:#ffffff; --accent-soft:#f5e5cb;
+  --good:#256f45; --good-bg:#e1f0e6; --warn:#9a5a00; --warn-bg:#fbeed6; --crit:#a82219; --crit-bg:#f8dfdc;
+  --slow:#2d5f8a; --slow-bg:#e0ebf5;
+  --display:"Saira Condensed","Arial Narrow",sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121618; --surface:#1b2124; --fg:#e7ebea; --muted:#98a4a8; --line:#2d3639;
+  --accent:#e8a03a; --accent-ink:#1b1204; --accent-soft:#3a2a13;
+  --good:#71c995; --good-bg:#16302a; --warn:#f0b75e; --warn-bg:#382a14; --crit:#ff8d82; --crit-bg:#3d1c1a;
+  --slow:#8cc0ea; --slow-bg:#18293a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121618; --surface:#1b2124; --fg:#e7ebea; --muted:#98a4a8; --line:#2d3639;
+  --accent:#e8a03a; --accent-ink:#1b1204; --accent-soft:#3a2a13;
+  --good:#71c995; --good-bg:#16302a; --warn:#f0b75e; --warn-bg:#382a14; --crit:#ff8d82; --crit-bg:#3d1c1a;
+  --slow:#8cc0ea; --slow-bg:#18293a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;padding-block:20px 40px;padding-inline:16px}
+.wrap{max-width:1000px;margin:0 auto;display:grid;gap:18px}
+header{display:grid;gap:4px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,7vw,44px);line-height:1;margin:0;text-wrap:balance;letter-spacing:.01em}
+.sub{color:var(--muted);margin:0;max-width:60ch}
+.grid{display:grid;gap:18px;grid-template-columns:1fr}
+@media (min-width:800px){.grid{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:start}.result{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:20px;min-width:0}
+.field{display:grid;gap:8px;min-width:0}
+.label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:600;flex-wrap:wrap}
+.label .hint{font-weight:400;color:var(--muted);font-size:14px}
+.readout{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:15px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tabs button{font:inherit;font-family:var(--display);font-weight:600;font-size:20px;letter-spacing:.03em;text-transform:uppercase;padding:8px;border:0;background:var(--surface);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--fg);color:var(--surface)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.cards label{display:grid;gap:3px;align-content:start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;background:var(--surface);min-width:0;position:relative}
+.cards label span{font-weight:600;font-size:15px;line-height:1.2}
+.cards label small{font-size:12.5px;color:var(--muted);line-height:1.3}
+.cards input{position:absolute;opacity:0;pointer-events:none}
+.cards label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
+.cards label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.cards label span.tag{justify-self:start;font-family:var(--mono);font-weight:500;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:2px 6px;border-radius:4px;margin-bottom:2px;line-height:1.4}
+.tag.std{background:var(--line);color:var(--fg)}
+.tag.slow,.tag.cold{background:var(--slow-bg);color:var(--slow)}
+.tag.fast{background:var(--warn-bg);color:var(--warn)}
+.tag.own{background:var(--accent-soft);color:var(--accent)}
+.cards label:has(input:checked) .tag.own{background:var(--surface)}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+.tag.data{background:var(--good-bg);color:var(--good)}
+.tag.est{background:transparent;color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn)}
+.tag.user{background:var(--slow-bg);color:var(--slow)}
+.q{display:inline-block;vertical-align:1px;margin-left:6px;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:3px;line-height:1.4;font-weight:500}
+.q.data{background:var(--good-bg);color:var(--good)}
+.q.est{color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn)}
+.q.user{background:var(--slow-bg);color:var(--slow)}
+.locked{font-size:14px;color:var(--muted);margin:0;padding:8px 12px;border-left:3px solid var(--accent)}
+input[type=range]{width:100%;accent-color:var(--accent);height:28px}
+.scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input[type=number]{font:inherit;font-family:var(--mono);font-size:16px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);width:100%;min-width:0;flex:1 1 90px}
+input[type=number]:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);flex:0 0 auto}
+.help{font-size:14px;color:var(--muted);margin:0}
+.status{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:999px;justify-self:start}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.status.good{color:var(--good);background:var(--good-bg)}
+.status.warn{color:var(--warn);background:var(--warn-bg)}
+.status.crit{color:var(--crit);background:var(--crit-bg)}
+.picked{font-size:14px;color:var(--muted);margin:-8px 0 0}
+.picked b{color:var(--fg);font-weight:600}
+.big{display:grid;gap:2px}
+.big .num{font-family:var(--display);font-weight:700;font-size:clamp(64px,18vw,96px);line-height:.9;font-variant-numeric:tabular-nums;color:var(--accent)}
+.big .num small{font-size:.45em;margin-left:2px}
+.big .what{color:var(--muted)}
+.amounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:0}
+.amounts div{background:var(--surface);padding:10px 12px;display:grid;gap:2px;min-width:0}
+.amounts dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.amounts dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:18px;overflow-wrap:anywhere}
+.amounts dd small{display:block;font-size:12px;color:var(--muted)}
+.chart{margin:0}
+.chart svg{width:100%;height:auto;display:block}
+.chart figcaption{font-size:13px;color:var(--muted);margin-top:4px}
+.notes{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.notes li{padding-left:14px;border-left:3px solid var(--line);font-size:15px}
+.notes li.crit{border-color:var(--crit)}
+.notes li.warn{border-color:var(--warn)}
+.notes li.tip{border-color:var(--slow)}
+.ratioCtl{display:grid;gap:6px;padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.ratioCtl .recline{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.ratioCtl button{font:inherit;font-size:14px;font-weight:600;padding:6px 10px;border:1px solid var(--accent);border-radius:6px;background:transparent;color:var(--accent);cursor:pointer}
+.ratioCtl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ratioCtl.off .recline .mine{display:none}
+.sectionHead{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.03em;text-transform:uppercase;margin:0;color:var(--muted)}
+.modebar{display:inline-grid;grid-template-columns:1fr 1fr;justify-self:start;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface);gap:2px}
+.modebar button{font:inherit;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer}
+.modebar button[aria-pressed="true"]{background:var(--fg);color:var(--surface)}
+[data-mode="shop"] .modebar button#mode-shop[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.modebar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[data-mode="shop"] header{padding-top:14px;background:repeating-linear-gradient(-45deg,var(--accent) 0 10px,var(--fg) 10px 20px) top/100% 6px no-repeat}
+.quip{margin:0;font-family:var(--display);font-weight:600;font-size:22px;line-height:1.15;color:var(--fg);text-wrap:balance}
+.tdsrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tdsrow label{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.explain{font-size:14px;color:var(--muted)}
+.explain summary{cursor:pointer;color:var(--accent);font-weight:600;width:max-content;max-width:100%}
+.explain summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.explain p{margin:8px 0 0;max-width:62ch}
+.disclaimer{font-size:13px;color:var(--muted);max-width:75ch;margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="modebar" role="group" aria-label="Language">
+    <button type="button" id="mode-pro" aria-pressed="true">Professional</button>
+    <button type="button" id="mode-shop" aria-pressed="false">Shop floor</button>
+  </div>
+  <header>
+    <div class="eyebrow" data-shop="Goo · Gunk · The stuff that bites">Resins · Pastes · Hardeners</div>
+    <h1 data-shop="How Much Bloody Kicker">Laminator's Catalyst Calculator</h1>
+    <p class="sub" data-shop="Pick your poison, tell it how shit the weather is, and it'll tell you how much kicker to chuck in and how long before it goes off in the bucket. Read all of it. Yes, the bottom bit too.">Pick the product and the hardener on the shelf, set the shop conditions and batch, and get the ratio, the amount to measure and how long you have.</p>
+  </header>
+
+  <div class="grid">
+
+    <section class="panel">
+      <div class="field">
+        <div class="tabs" role="tablist" aria-label="Product category">
+          <button type="button" role="tab" id="tab-resin" aria-selected="true" data-shop="Wet stuff">Resins</button>
+          <button type="button" role="tab" id="tab-paste" aria-selected="false" data-shop="Gunk">Pastes</button>
+        </div>
+        <div class="cards" id="products" role="radiogroup" aria-label="Product"></div>
+      </div>
+
+      <div class="field">
+        <div class="label" data-shop='Kicker <span class="hint">only the ones that actually work, genius</span>'>Hardener <span class="hint">only grades that cure this product</span></div>
+        <div class="cards" id="hardeners" role="radiogroup" aria-label="Hardener"></div>
+        <p class="locked" id="lockMsg" hidden></p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="temp"><span data-shop="How hot is the shed">Shop temperature</span> <span class="readout" id="tempOut">24 °C</span></label>
+        <input type="range" id="temp" min="5" max="40" step="1" value="24">
+        <div class="scale"><span>5°</span><span>15°</span><span>25°</span><span>35°</span><span>40°</span></div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="rh"><span data-shop="How sweaty is it">Relative humidity</span> <span class="readout" id="rhOut">65 %</span></label>
+        <input type="range" id="rh" min="20" max="100" step="1" value="65">
+        <div class="scale"><span>20%</span><span>50%</span><span>75%</span><span>100%</span></div>
+        <p class="help" id="dew"></p>
+      </div>
+
+      <div class="field">
+        <label class="label" for="batch" data-shop='How much you are mixing <span class="hint">before the kicker goes in</span>'>Batch <span class="hint">before hardener</span></label>
+        <div class="row">
+          <input type="number" id="batch" inputmode="decimal" min="0" step="any" value="1">
+          <select id="unit" aria-label="Batch unit">
+            <option value="kg">kg</option>
+            <option value="g">g</option>
+            <option value="L">litres</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" id="baseField">
+        <div class="label"><span data-shop="What your data sheet says">Your data sheet (TDS)</span> <span class="hint" data-shop="if you can find it">optional</span></div>
+        <div class="tdsrow">
+          <label for="tdsPct"><span data-shop="Kicker">Catalyst</span><input type="number" id="tdsPct" inputmode="decimal" min="0" step="0.05" placeholder="%"></label>
+          <label for="tdsT"><span data-shop="At">At temperature</span><input type="number" id="tdsT" inputmode="decimal" step="1" placeholder="°C"></label>
+          <label for="tdsGel"><span data-shop="Goes off in">Gel time</span><input type="number" id="tdsGel" inputmode="decimal" min="0" step="any" placeholder="min"></label>
+        </div>
+        <details class="explain">
+          <summary data-shop="What the hell is this?">What is this?</summary>
+          <div data-shop="<p>Every resin is a bit different. The data sheet that comes with it, the bit of paper nobody reads, says how much kicker to use at a certain temperature, and usually how fast it goes off.</p><p>Copy those numbers in here and the app stops guessing and works off your resin. Sheet says <q>1.5% at 20 °C, gel time 25 minutes</q>? Type 1.5, 20 and 25. Done.</p><p>Only got the percentage? Fill in the first two and leave the gel time empty. No sheet at all? Leave the lot blank and the app uses typical numbers, and admits they are guesses.</p><p>Each product remembers its own numbers, so your gelcoat sheet won't mess up your laminating resin.</p>"><p>Every resin is a little different. The technical data sheet (TDS) that comes with it tells you how much catalyst to use at a certain temperature, and usually how long it takes to gel.</p><p>Copy those numbers in here and the app works from your resin instead of a typical one. If the sheet says <q>1.5% at 20 °C, gel time 25 minutes</q>, type 1.5, 20 and 25.</p><p>If the sheet only gives a percentage, fill in the first two boxes and leave gel time empty. If you don't have the sheet, leave everything blank: the app uses typical values and marks them as estimates.</p><p>Each product keeps its own numbers, so a gelcoat sheet won't change your laminating resin.</p></div>
+        </details>
+      </div>
+
+      <div class="field" id="customField" hidden>
+        <div class="field" id="ratioWrap">
+          <label class="label" for="ratio" data-shop='Hardener per 100 parts <span class="hint">by weight, off the sheet</span>'>Hardener per 100 parts <span class="hint">by weight</span></label>
+          <input type="number" id="ratio" inputmode="decimal" min="1" step="1" value="30">
+        </div>
+        <div class="field">
+          <label class="label" for="epl" id="eplLabel">Pot life on the data sheet <span class="hint">minutes at 25 °C</span></label>
+          <input type="number" id="epl" inputmode="decimal" min="1" step="1" value="20">
+        </div>
+      </div>
+    </section>
+
+    <section class="panel result" id="results" aria-live="polite">
+      <h2 class="sectionHead" data-shop="The damage">Results</h2>
+      <p class="quip" id="quip" hidden></p>
+      <span id="status" class="status good">Good to lay up</span>
+      <p class="picked" id="picked"></p>
+      <div class="big">
+        <div class="num" id="pct">1.25<small>%</small></div>
+        <div class="what" id="what">MEKP by weight of resin</div>
+      </div>
+      <div class="ratioCtl" id="ratioCtl">
+        <label class="label" for="pctR"><span data-shop="Kicker">Catalyst ratio</span> <span class="readout" id="pctOut"></span></label>
+        <input type="range" id="pctR" min="1" max="4" step="0.05">
+        <div class="scale" id="pctScale"></div>
+        <div class="recline"><span id="pctRec"></span><button type="button" id="pctReset" data-shop="Put it back how it was">Back to recommended</button></div>
+      </div>
+      <p class="locked" id="ratioFixed" hidden></p>
+      <dl class="amounts" id="amounts"></dl>
+      <p class="help" data-shop='<span class="q data" style="margin:0 4px 0 0">Checked</span> came off a real data sheet. <span class="q est" style="margin:0 4px 0 0">Educated guess</span> is exactly that. <span class="q user" style="margin:0 4px 0 0">Your problem</span> is whatever you typed in, so if it is wrong, that is on you.'><span class="q data" style="margin:0 4px 0 0">TDS-based</span> starts from a published data sheet figure, scaled to your conditions. <span class="q est" style="margin:0 4px 0 0">Estimate</span> is a typical value with no published figure behind it. <span class="q user" style="margin:0 4px 0 0">Your figure</span> comes from what you entered.</p>
+      <figure class="chart" id="chartWrap">
+        <svg id="chart" viewBox="0 0 340 170" role="img" aria-label="Catalyst ratio against temperature"></svg>
+        <figcaption data-shop="The line is what you should be doing. The dot is what you are actually doing. The red bit is too cold, so go home.">The line is the recommended ratio across temperatures. The dot is your ratio at your shop temperature; the shaded strip is too cold to cure.</figcaption>
+      </figure>
+      <ul class="notes" id="notes"></ul>
+    </section>
+  </div>
+
+  <p class="disclaimer" data-shop="This is a calculator, not your mum. The TDS outranks it, the supervisor outranks the TDS, and Claire at HR outranks everyone. Cup test anything new before you glass a hull with it, and wear the bloody gloves. MEKP in the eye means hospital, not a funny story.">Ratios are typical workshop values for promoted resins. Gel times come from a model fitted to published data sheet figures; products and hardener grades marked as typical have no published figure behind them yet. The supplier's TDS always takes priority, and the hardener a product's TDS names is the one to use. Run a cup test on any new batch before committing a part.</p>
+</div>
+
+<script>
+/* ---------- Hardeners ----------
+   f = gel time multiplier against a standard 9% MEKP.  h = °C per halving of gel time.
+   est = speed not published as a number, so f is a typical estimate. */
+const H={
+  kp9:  {name:"Norox KP9 / MEKP-9",tag:"std",tagT:"Standard",f:1,h:8,desc:"General purpose, medium gel time.",stag:"Normal",sdesc:"The usual. Does the job, doesn't whinge."},
+  m50:  {name:"Butanox M-50",tag:"std",tagT:"Standard",f:1,h:8,desc:"Standard MEKP, low water content.",stag:"Normal",sdesc:"Bog standard kicker. Nothing fancy."},
+  m50r: {name:"Butanox M-50 Red",tag:"std",tagT:"Standard",f:1,h:8,desc:"Standard speed. Red dye shows mixing and fades on cure.",stag:"Normal",sdesc:"Same speed, just red so you can see whether you've actually mixed it."},
+  m60:  {name:"Butanox M-60",tag:"fast",tagT:"Medium-fast",f:0.9,h:8,est:1,desc:"10% more active oxygen than M-50.",stag:"Bit quick",sdesc:"Bit more punch than M-50."},
+  mec:  {name:"Norox MEC",tag:"cold",tagT:"Cold weather",f:0.95,h:10,est:1,desc:"Cures well in thin film and cold. Less affected by temperature.",stag:"Winter",sdesc:"Doesn't sulk in the cold like the rest of them."},
+  n9h:  {name:"Norox MEKP-9H",tag:"slow",tagT:"Slow",f:1.3,h:8,est:1,desc:"Longer gel, same gel-to-cure as MEKP-9. Suits gelcoat.",stag:"Slow",sdesc:"Slower gel, same finish. Gelcoat's best mate."},
+  n925h:{name:"Norox MEKP-925H",tag:"std",tagT:"Standard",f:1,h:8,desc:"High dimer, low H₂O₂. For vinyl ester and gelcoat, less foaming.",stag:"Normal",sdesc:"Low fizz. Keeps vinyl ester and gelcoat from foaming up."},
+  lpt:  {name:"Butanox LPT-IN",tag:"slow",tagT:"Extra slow",f:1.8,h:8,est:1,desc:"Much longer gel. Hot weather, big parts, infusion, vinyl ester.",stag:"Glacial",sdesc:"Slow as a wet week. Hot days, big parts, infusion."},
+  bpo:  {name:"BPO cream hardener",tag:"own",tagT:"Own hardener",f:1,h:8,desc:"The tube of cream supplied with the filler.",stag:"Comes with it",sdesc:"The little tube of cream. Don't lose it, don't swap it."},
+  w205: {name:"West System 205",tag:"fast",tagT:"Fast",pot:10.5,ratio:5,minT:4,desc:"5:1 by volume. 9 to 12 min pot life at 22 °C.",stag:"Quick",sdesc:"5:1. Ten minutes and it's gone. Like your weekend."},
+  w206: {name:"West System 206",tag:"slow",tagT:"Slow",pot:22.5,ratio:5,minT:16,est:1,desc:"5:1 by volume. About 20 to 25 min pot life at 22 °C.",stag:"Slow",sdesc:"5:1. Twenty-odd minutes. Don't spend them on your phone."},
+  w209: {name:"West System 209",tag:"slow",tagT:"Extra slow",pot:45,ratio:3,minT:16,desc:"3:1 by volume. 40 to 50 min at 22 °C, 15 to 20 min at 35 °C.",stag:"Glacial",sdesc:"3:1. For stinking hot days and slow hands."},
+  epc:  {name:"Other matched hardener",tag:"own",tagT:"From TDS",custom:1,desc:"Gurit, Sicomin, Pro-Set and others. Enter ratio and pot life from the data sheet.",stag:"Read the sheet",sdesc:"Someone else's epoxy. Type in what their sheet says."},
+  mma5: {name:"Crestabond M1-05 activator",tag:"own",tagT:"Own activator",work:5.5,minT:18,desc:"10:1 by volume. 4 to 7 min working, 12 to 18 min fixture.",stag:"Comes with it",sdesc:"10:1. About five minutes to get it right. No pressure."},
+  mmac: {name:"Other MMA activator",tag:"own",tagT:"From TDS",custom:1,desc:"Plexus, SikaFast and other 10:1 grades. Enter working time from the TDS.",stag:"Read the sheet",sdesc:"Other glue. Type in the working time off the sheet."}
+};
+const MEKP_POLY=["kp9","m50","m50r","m60","mec","n9h","lpt"];
+const MEKP_VE=["n925h","kp9","m50","lpt"];
+const MEKP_GEL=["n925h","n9h","m50","m50r","kp9","lpt"];
+
+const C={
+  gp:[[15,2.0],[18,1.75],[20,1.5],[25,1.25],[30,1.0],[35,0.8]],
+  inf:[[15,1.8],[20,1.5],[25,1.2],[30,1.0],[35,0.8]],
+  ve:[[15,2.0],[20,1.75],[25,1.5],[30,1.25],[35,1.0]],
+  gel:[[15,2.5],[20,2.0],[25,1.8],[30,1.5],[35,1.2]],
+  bpo:[[10,3.0],[15,2.5],[20,2.0],[25,2.0],[30,1.5],[35,1.0]],
+  fixed2:[[15,2.0],[35,2.0]]
+};
+
+/* ---------- Products ----------
+   gel = minutes to gel, 100 g at 25 °C with refPct of a standard hardener.  src = where that figure comes from. */
+const P={
+  ortho:{cat:"resin",name:"Ortho laminating resin",ex:"Crystic, Polylite, Synolite, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:18,refPct:1,src:"Easy Composites GP resin TDS",hard:MEKP_POLY,def:"m50",
+    note:"Hand lay-up and spray-up. Don't drop below 0.8% to buy time; the laminate stays green and soft.",
+    shop:"Bread and butter. Don't go under 0.8% to buy time; it stays green and you get to explain why the hull's bendy."},
+  iso:{cat:"resin",name:"Iso laminating resin",ex:"Crystic, Polylite, Aropol, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:20,refPct:1,hard:MEKP_POLY,def:"m50",
+    note:"Better water and chemical resistance than ortho. Usual choice for the skin coat behind gelcoat below the waterline.",
+    shop:"Ortho's posh cousin. Takes water better, so it goes behind the gelcoat below the waterline."},
+  dcpd:{cat:"resin",name:"DCPD laminating resin",ex:"Polylite, Synolite, Aropol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:22,refPct:1,hard:MEKP_POLY,def:"m50",
+    note:"Low shrink and fast wet-out, good for cosmetics. More brittle than ortho, so keep it out of structural layers.",
+    shop:"Wets out fast, barely shrinks, snaps like a biscuit. Cosmetic layers only, not the stuff holding the boat together."},
+  inf:{cat:"resin",name:"Infusion resin",ex:"Crystic, Synolite, Polylite infusion grades",kind:"mekp",curve:C.inf,min:0.8,max:2.0,minT:16,gel:55,refPct:1,src:"Easy Composites IP2 TDS",hard:["lpt","m50","n9h","kp9","mec"],def:"lpt",
+    note:"Set gel time against your fill time with margin to spare. Cup test from the drum you're feeding before you open the line.",
+    shop:"Know your fill time and give yourself slack. Gel it halfway up the part and enjoy grinding out a dry patch the size of a car bonnet."},
+  ve:{cat:"resin",name:"Vinyl ester",ex:"Derakane, Atlac, Dion, Crystic VE",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:30,refPct:1,hard:MEKP_VE,def:"n925h",
+    note:"Fussier in the cold than polyester and prone to foaming with high-H₂O₂ MEKP. Use the grade the TDS names.",
+    shop:"Hates the cold, foams if you look at it funny. Use the kicker the TDS names, not whatever's closest to your hand."},
+  gelc:{cat:"resin",name:"Gelcoat",ex:"Crystic, Polycor, Norpol, Maxguard",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:32,refPct:1,hard:MEKP_GEL,def:"n925h",
+    note:"Never below 1.2%. Under-catalysed gelcoat stays soft, prints through and blisters. High-H₂O₂ MEKP causes porosity.",
+    shop:"Never under 1.2%. Soft gelcoat blisters, prints through and comes back to haunt you at the warranty claim."},
+  flow:{cat:"resin",name:"Flowcoat / topcoat",ex:"Crystic, Polycor, Norpol",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
+    note:"Waxed to cure tack-free in air. The wax layer has to be sanded off before anything bonds to it.",
+    shop:"Waxed so it cures in air. Sand the wax off before you stick anything to it, or it falls off and you look stupid."},
+  epoxy:{cat:"resin",name:"Epoxy laminating",ex:"West System, Gurit Ampreg, Sicomin, Pro-Set",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
+    note:"Weigh or pump, never eyeball. Extra hardener doesn't speed epoxy up; it leaves the cure soft. Change hardener speed instead.",
+    shop:"Weigh it or pump it. Never eyeball it. More hardener isn't faster, it's just shit."},
+
+  bog:{cat:"paste",name:"Polyester body filler",ex:"U-Pol, Isopon P38, 3M",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:3.2,refPct:2,src:"Mipa P50 TDS",hard:["bpo"],def:"bpo",
+    note:"Mix until the colour is even. Any streak is an uncured spot.",
+    shop:"Mix till it's one colour. Streaks are soft spots, and soft spots are callbacks."},
+  easy:{cat:"paste",name:"Lightweight easy-sand filler",ex:"U-Pol, Isopon, 3M lightweight grades",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
+    note:"Microballoon filler that sands easily. Porous, so seal it before paint or gelcoat goes on.",
+    shop:"Sands like a dream, drinks everything like a sponge. Seal it before paint."},
+  fibre:{cat:"paste",name:"Fibre-reinforced filler",ex:"Isopon P40, U-Pol Fibral",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
+    note:"Strand-filled for bridging holes and building thickness. Fold the hardener through rather than whipping it.",
+    shop:"Hairy bog. Fold the cream through, don't whip it like you're making a pavlova."},
+  gpaste:{cat:"paste",name:"Gelcoat repair paste",ex:"Crystic, Polycor, thickened gelcoat",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
+    note:"For chips and edges. Cure it under film or wax solution, or the surface stays tacky.",
+    shop:"For chips and dings. Cover it with film or wax or it stays tacky until the heat death of the universe."},
+  pbond:{cat:"paste",name:"Polyester bonding paste",ex:"Crystic, Polylite, Norpol core bonds",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:15,gel:40,refPct:1,hard:MEKP_POLY,def:"m50",
+    note:"For core and secondary bonding. Grind and wipe the bond line; it won't stick to waxed or contaminated laminate.",
+    shop:"Grind it, wipe it, then bond it. It won't stick to wax, dust or optimism."},
+  vbond:{cat:"paste",name:"Vinyl ester bonding paste",ex:"Derakane, Atlac, Crystic VE pastes",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:45,refPct:1,hard:MEKP_VE,def:"n925h",
+    note:"Tougher than polyester paste for stringers and bulkheads. Same foaming caution as vinyl ester resin.",
+    shop:"The tough stuff for stringers and bulkheads. Foams like vinyl ester does, because it is vinyl ester."},
+  ua:{cat:"paste",name:"Crestomer 1152PA",ex:"Scott Bader urethane acrylate adhesive",kind:"mekp",curve:C.fixed2,min:2,max:2,minT:15,gel:50,refPct:2,src:"Crestomer 1152PA TDS",ratioSrc:1,hard:["m50","kp9","m50r"],def:"m50",
+    note:"Fixed at 2% MEKP. Work between 18 and 25 °C and never below 15 °C.",
+    shop:"2%. Between 18 and 25 °C. Never below 15. It's not complicated."},
+  mma:{cat:"paste",name:"MMA structural adhesive",ex:"Crestabond, Plexus, SikaFast",kind:"mma",minT:18,hard:["mma5","mmac"],def:"mma5",
+    note:"Dispense through the static mixer and throw the first bead away. Clamp within the working time and leave it until fixture.",
+    shop:"Bin the first squirt out of the nozzle. Clamp it in time, then leave it alone. Yes, you."},
+  fair:{cat:"paste",name:"Epoxy fairing compound",ex:"West 105 with 407 or 410, Gurit fairing",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
+    note:"Mix resin and hardener fully before adding filler. Thicken to peanut-butter consistency for vertical work.",
+    shop:"Resin and hardener mixed properly first, then the filler. Peanut butter for vertical, unless you enjoy sweeping it off the floor."}
+};
+
+const $=id=>document.getElementById(id);
+const shopMode=()=>state.mode==="shop";
+const T=(pro,shop)=>shopMode()?shop:pro;
+const QUIPS={
+  good:["Right. Don't fuck this up.","Numbers are sorted. The rest is on you.","Mix it, use it, clean your brush. In that order.","Somewhere a supervisor is cautiously optimistic.","Even the apprentice could manage this. Probably.","Safety first doesn't mean mixing resin with your glasses, knobhead.","Gloves on. Your hands aren't a stirring stick.","Respirator goes on your face, not round your neck like a medal.","Send the trainee to stores for a new bubble for the spirit level.","Trainee's gone for a long weight. Give him twenty minutes.","Someone ask stores if the left-handed rollers came in yet.","We're out of tartan gelcoat again. Trainee, off you go.","Grab the trainee a bucket of steam for the post-cure."],
+  warn:["Doable. Barely. Read the yellow bits.","Yellow means think. Give it a go.","This is where you slow down and pay attention, champ.","Not a disaster yet. Give it time.","Clock's running. Last one finished drinks the batch.","Want to hear a joke? Fuck off. Pot life's ticking."],
+  crit:["Employee of the month my arse.","Claire at HR will have a lot of justifying to do.","Put the bucket down and step away from the job.","This is how incident reports get written.","Congratulations, you've invented scrap."]};
+let quipLevel=null,quipText="";
+const state={mode:"pro",cat:"resin",p:"ortho",h:{},t:24,rh:65,batch:1,unit:"kg",tds:{},ratio:30,epl:20,manual:null};
+try{Object.assign(state,JSON.parse(localStorage.getItem("lcc-v5")||"{}"))}catch(e){}
+if(!P[state.p])state.p="ortho";
+state.manual=null;
+if(typeof state.h!=="object"||!state.h)state.h={};
+if(typeof state.tds!=="object"||!state.tds)state.tds={};
+const tdsOf=pid=>{const d=state.tds[pid]||{},pct=parseFloat(d.pct),t=parseFloat(d.t),gel=parseFloat(d.gel);return {pct:pct>0?pct:null,t:isFinite(t)?t:25,gel:gel>0?gel:null}};
+const hardOf=pid=>{const p=P[pid],h=state.h[pid];return p.hard.includes(h)?h:p.def};
+
+function interp(c,t){if(t<=c[0][0])return c[0][1];for(let i=1;i<c.length;i++){const [a,b]=c[i-1],[x,y]=c[i];if(t<=x)return b+(y-b)*(t-a)/(x-a)}return c[c.length-1][1]}
+const r05=x=>Math.round(x*20)/20;
+const fmt=(x,d=1)=>x.toLocaleString("en-AU",{minimumFractionDigits:d,maximumFractionDigits:d});
+const dewPoint=(t,rh)=>{const a=17.62,b=243.12,g=Math.log(rh/100)+a*t/(b+t);return b*g/(a-g)};
+const massF=g=>Math.min(1.1,Math.max(0.6,Math.pow(Math.max(g,10)/100,-0.12)));
+function factorFor(p){const pid=Object.keys(P).find(k=>P[k]===p),d=tdsOf(pid);return d.pct&&p.curve&&p.min!==p.max?d.pct/interp(p.curve,d.t):1}
+function ratioAt(p,t,rh){
+  const f=factorFor(p);let pct=interp(p.curve,t)*f;
+  if(p.kind==="mekp"&&rh>70&&p.min!==p.max)pct+=Math.min(0.2,(rh-70)/15*0.1);
+  return r05(Math.min(p.max*f,Math.max(p.min*f,pct)));
+}
+// Gel time. With a TDS gel figure: scale from it. Otherwise scale from the typical figure,
+// judging the catalyst level against this product's own normal (so a resin that needs more kicker isn't assumed faster).
+function gelMin(p,hd,t,pct,mass){
+  const pid=Object.keys(P).find(k=>P[k]===p),d=tdsOf(pid);
+  if(d.gel){const rp=d.pct||interp(p.curve,d.t)*factorFor(p);return d.gel*hd.f*Math.pow(2,(d.t-t)/hd.h)*(rp/pct)*massF(mass)}
+  return p.gel*hd.f*Math.pow(2,(25-t)/hd.h)*(p.refPct*factorFor(p)/pct)*massF(mass);
+}
+function dur(m){
+  if(!isFinite(m)||m<=0)return "–";
+  if(m<10)return fmt(m,1).replace(/\.0$/,"")+" min";
+  if(m<90)return Math.round(m)+" min";
+  if(m>480)return "8 h+";
+  const h=Math.floor(m/60),r=Math.round((m-h*60)/5)*5;
+  return r===60?`${h+1} h`:r?`${h} h ${r}`:`${h} h`;
+}
+const chip=k=>`<span class="q ${k}">${(shopMode()?{data:"Checked",est:"Educated guess",user:"Your problem"}:{data:"TDS-based",est:"Estimate",user:"Your figure"})[k]}</span>`;
+const span=g=>`${dur(g*0.75)} to ${dur(g*1.3)}`;
+
+function buildProducts(){
+  for(const c of ["resin","paste"])$("tab-"+c).setAttribute("aria-selected",String(state.cat===c));
+  $("products").innerHTML=Object.entries(P).filter(([,p])=>p.cat===state.cat).map(([k,p])=>
+    `<label><input type="radio" name="prod" id="prod-${k}" value="${k}"${k===state.p?" checked":""}><div class="tags">${(p.src||p.kind==="epoxy"||p.kind==="mma")?`<span class="tag data">${T("TDS-based","Checked")}</span>`:`<span class="tag est">${T("Estimated times","Guesswork")}</span>`}</div><span>${p.name}</span><small>${p.ex}</small></label>`).join("");
+}
+function buildHardeners(){
+  const p=P[state.p],cur=hardOf(state.p);
+  $("hardeners").innerHTML=p.hard.map(k=>{const h=H[k];return `<label><input type="radio" name="hard" id="hard-${k}" value="${k}"${k===cur?" checked":""}><div class="tags"><span class="tag ${h.tag}">${T(h.tagT,h.stag)}</span>${h.custom?`<span class="tag user">${T("Your figures","Your problem")}</span>`:h.est?`<span class="tag est">${T("Estimated speed","Guesswork")}</span>`:`<span class="tag data">${T("TDS-based","Checked")}</span>`}</div><span>${h.name}</span><small>${T(h.desc,h.sdesc)}</small></label>`}).join("");
+  const lock=$("lockMsg"),msg={
+    bpo:T("Fillers cure only with the BPO cream supplied with them. MEKP will never set them off.","Filler only goes off with its own cream. Put MEKP in it and it never sets. Ever. Ask the last bloke who tried."),
+    mma:T("MMA adhesives cure only with their own activator through the static mixer. No peroxide from the shelf will work.","MMA only cures with its own activator through the nozzle. Nothing off the shelf will touch it, so stop looking."),
+    epoxy:T("Epoxy uses its matched hardener at a fixed ratio. MEKP and BPO do nothing to it.","Epoxy takes its own hardener. MEKP does fuck all to it.")}[p.kind];
+  lock.hidden=!msg;if(msg)lock.textContent=msg;
+}
+
+function render(){
+  const p=P[state.p],hk=hardOf(state.p),hd=H[hk],t=state.t,rh=state.rh;
+  const kind=p.kind,custom=!!hd.custom,peroxide=kind==="mekp"||kind==="bpo";
+  $("tempOut").textContent=t+" °C";$("rhOut").textContent=rh+" %";
+  const dp=dewPoint(t,rh);
+  $("dew").textContent=T(`Dew point ${fmt(dp,0)} °C. Moulds and core colder than this will sweat.`,`Dew point ${fmt(dp,0)} °C. Anything colder than that sweats like an apprentice at a toolbox talk.`);
+  $("picked").innerHTML=T(`<b>${p.name}</b> with <b>${hd.name}</b>`,`Running <b>${p.name}</b> on <b>${hd.name}</b>.`);
+  $("baseField").hidden=!peroxide||p.min===p.max;$("chartWrap").hidden=!peroxide;
+  $("customField").hidden=!custom;$("ratioWrap").hidden=kind==="mma";
+  $("eplLabel").innerHTML=(kind==="mma"?T("Working time on the data sheet","Working time off the sheet"):T("Pot life on the data sheet","Pot life off the sheet"))+' <span class="hint">minutes at 25 °C</span>';
+
+  const b=Math.max(0,parseFloat(state.batch)||0);
+  const massG=state.unit==="g"?b:state.unit==="kg"?b*1000:b*1100;
+  const volML=state.unit==="L"?b*1000:massG/1.15;
+
+  const notes=[];let level="good",label=kind==="mma"?T("Good to bond","Glue it"):kind==="bpo"?T("Good to fill","Slap it on"):T("Good to lay up","Crack on");
+  const bump=(lv,lab)=>{const r={good:0,warn:1,crit:2};if(r[lv]>r[level]){level=lv;label=lab}};
+  const minT=Math.max(p.minT,hd.minT||0);
+  if(t<minT){bump("crit",T("Too cold","Nothing's curing today"));notes.push(["crit",T(`Below ${minT} °C this won't cure properly${peroxide?" however much hardener goes in":""}. Warm the shop and the materials first.`,`Under ${minT} °C this shit won't cure${peroxide?", no matter how much kicker you drown it in":""}. Heat the shed, heat the materials, or go home.`)])}
+  if(kind==="epoxy"){if(rh>=80){bump("warn",T("Amine blush risk","Blush incoming"));notes.push(["warn",T("Above 80% humidity epoxy is prone to amine blush. Wash the cured surface with water and a scotchbrite before sanding or recoating.","Over 80% humidity epoxy grows a greasy blush. Wash it off with water and a scotchbrite before you sand, or enjoy watching the next coat peel.")])}}
+  else if(kind!=="mma"){
+    if(rh>=85){bump("crit",T("Too humid","Swamp conditions"));notes.push(["crit",T("At 85% humidity and above, moisture inhibits the cure and gelcoat can stay tacky. Wait for drier air or dehumidify.","85% humidity. The resin's going to sulk and the gelcoat stays tacky. Dehumidify, or knock off and come back when it's not a sauna.")])}
+    else if(rh>=75){bump("warn",T("Humid: watch the cure","Muggy as"));notes.push(["warn",T("High humidity slows the surface cure.","Muggy. The surface cure drags its feet.")+(kind==="mekp"&&p.min!==p.max?T(" The ratio already includes a small increase for it."," Already chucked a bit more kicker in for you. You're welcome."):"")])}
+  }
+  if(t>32){bump("warn",T("Hot: short pot life","Hot as hell, work fast"));notes.push(["warn",T("Above 32 °C pot life drops fast. Mix smaller batches and keep everything out of the sun.","Over 32 °C the pot life goes to shit. Small batches, out of the sun, and save the chat for smoko.")])}
+  if(t-dp<3&&t>=minT){bump("warn",T("Condensation risk","Everything's sweating"));notes.push(["warn",T("Air is within 3 °C of its dew point. Check moulds and core aren't damp before you start.","Air's within 3 °C of its dew point. Feel the mould. If it's damp, you're laminating onto a puddle.")])}
+
+  if(kind==="mekp"&&t>=29&&hd.f<=1){const s=p.hard.find(k=>H[k].f>1);if(s)notes.push(["tip",T(`It's hot. ${H[s].name} gives you a longer gel at the same ratio.`,`Hot one. Grab the ${H[s].name}: same ratio, more time before it goes off in your hand.`)])}
+  if(kind==="mekp"&&t<18&&hk!=="mec"&&p.hard.includes("mec"))notes.push(["tip",T("It's cool. Norox MEC is less affected by temperature and cures better in thin films.","Cold one. Norox MEC doesn't sulk in the cold like the others.")]);
+  if(kind==="epoxy"&&t>=28&&hk==="w205")notes.push(["tip",T("It's warm for 205 Fast. 206 or 209 will give you a usable pot life.","205 in this heat? Bold. Grab 206 or 209 unless you fancy chiselling your mixing pot.")]);
+  if(kind==="epoxy"&&!custom&&hd.minT>t)notes.push(["tip",T(`Too cool for ${hd.name}. 205 Fast cures down to 4 °C.`,`Too cold for ${hd.name}. 205 Fast will go down to 4 °C.`)]);
+
+  const sl=(hd.sl||p.sl||[1,4]).slice();
+  if(p.min!=null)sl[0]=Math.min(sl[0],r05(p.min*factorFor(p)));
+  const fixedMsg=kind==="epoxy"?T("Fixed ratio. Epoxy cures by matching resin and hardener molecule for molecule, so more or less hardener weakens it. Change hardener speed instead.","Fixed ratio. Epoxy isn't polyester; you can't just chuck more in. More hardener means a soft, crap cure. Want it faster? Change the hardener.")
+    :kind==="mma"?T("Fixed 10:1 by volume through the mixer nozzle. The ratio isn't adjustable.","10:1 through the nozzle. Don't touch it. Seriously.")
+    :p.min===p.max?T(`Fixed at ${fmt(p.min,0)}% by the manufacturer. Adjusting it compromises the bond.`,`${fmt(p.min,0)}%. Not a suggestion. Fiddle with it and the bond's buggered.`):null;
+  $("ratioCtl").hidden=!!fixedMsg;$("ratioFixed").hidden=!fixedMsg;if(fixedMsg)$("ratioFixed").textContent=fixedMsg;
+
+  let html="";
+  if(kind==="epoxy"){
+    let hardAmt,potRef,big,small,what,resinTxt;
+    if(custom){const r=Math.max(0,parseFloat(state.ratio)||0),hg=massG*r/100;hardAmt=`${fmt(hg,hg<100?1:0)} g`;resinTxt=`${fmt(massG,0)} g`;potRef=Math.max(1,parseFloat(state.epl)||20)*Math.pow(2,(25-t)/10);big=fmt(r,0);small=":100";what=T("Hardener to resin, by weight","Hardener to resin, by weight. Off your sheet.")}
+    else{const v=volML/hd.ratio;hardAmt=`${fmt(v,v<100?1:0)} ml`;resinTxt=`${fmt(volML,0)} ml`;potRef=hd.pot*Math.pow(2,(22-t)/10);big=hd.ratio;small=":1";what=T("Resin to hardener, by volume","Resin to hardener, by volume. No freelancing.")}
+    const pl=potRef*massF(massG*1.2);
+    $("pct").innerHTML=`${big}<small>${small}</small>`;$("what").innerHTML=what+chip(custom?"user":"data");
+    html=`<div><dt>Resin</dt><dd>${resinTxt}</dd></div><div><dt>Hardener</dt><dd>${hardAmt}</dd></div>`+
+         `<div><dt>${T("Pot life in the cup","Cooks in the cup")}${chip(custom?"user":hd.est?"est":"data")}</dt><dd>${dur(pl)}<small>${span(pl)}</small></dd></div><div><dt>${T("Spread thin","Spread out")}${chip("est")}</dt><dd>${dur(pl*2.5)}<small>${T("roughly","ish")}</small></dd></div>`;
+    notes.push(["",T("Pot life scales from the data sheet figure, halving for every 10 °C rise. Spread into a roller tray, the working time runs well past the cup figure.","Pot life halves every 10 °C. Tip it into a roller tray and it lasts way longer. Leave it in the cup and it cooks, smokes and sets like a brick.")]);
+  }else if(kind==="mma"){
+    const w=custom?Math.max(1,parseFloat(state.epl)||10)*Math.pow(2,(25-t)/10):hd.work*Math.pow(2,(22-t)/10);
+    const act=volML/10;
+    $("pct").innerHTML=`10<small>:1</small>`;$("what").innerHTML=T("Adhesive to activator, by volume","Glue to activator, by volume")+chip("data");
+    html=`<div><dt>${T("Adhesive","Glue")}</dt><dd>${fmt(volML,0)} ml</dd></div><div><dt>Activator</dt><dd>${fmt(act,act<100?1:0)} ml</dd></div>`+
+         `<div><dt>${T("Working time","Clamp within")}${chip(custom?"user":"data")}</dt><dd>${dur(w)}<small>${span(w)}</small></dd></div><div><dt>${T("Fixture","Hands off for")}${chip(custom?"est":"data")}</dt><dd>${dur(w*2.7)}<small>${T("roughly","ish")}</small></dd></div>`;
+    notes.push(["",T("Cartridges meter the ratio for you. The amounts are for bulk packs dispensed by hand.","Cartridges do the ratio for you. These numbers are for the bulk-pack heroes.")]);
+  }else{
+    const rec=ratioAt(p,t,rh);
+    const pct=state.manual!=null?Math.min(sl[1],Math.max(sl[0],state.manual)):rec;
+    const g=massG*pct/100,gt=gelMin(p,hd,t,pct,massG);
+    const td=tdsOf(state.p);
+    const ratioK=td.pct&&p.min!==p.max?"user":p.ratioSrc?"data":"est";
+    const timeK=td.gel?"user":p.src&&!hd.est?"data":"est";
+    const sr=$("pctR");sr.min=sl[0];sr.max=sl[1];if(+sr.value!==pct)sr.value=pct;
+    $("pctScale").innerHTML=[0,1,2,3].map(i=>`<span>${fmt(sl[0]+(sl[1]-sl[0])*i/3,1).replace(/\.0$/,"")}%</span>`).join("");
+    $("pctOut").textContent=fmt(pct,2)+" %";
+    const manual=state.manual!=null&&Math.abs(pct-rec)>0.001;
+    $("pctRec").textContent=manual?T(`Recommended for these conditions: ${fmt(rec,2)}%`,`Should be ${fmt(rec,2)}% in this weather`):T(`Set to the recommended ratio for these conditions${ratioK==="est"?" (a typical workshop value, not from a TDS)":""}`,`Set to what it should be${ratioK==="est"?" (workshop folklore, not off a TDS)":""}`);
+    $("pctReset").hidden=!manual;
+    const f=factorFor(p),lo=p.min*f,hi=p.max*f;
+    if(pct<lo-0.001){bump("crit",T("Under-catalysed","Gonna stay sticky"));notes.push(["crit",T(`${fmt(pct,2)}% is below the ${fmt(lo,2)}% minimum for ${p.name.toLowerCase()}. It may gel but won't reach full cure: soft, tacky and weak, and it can stay that way.`,`${fmt(pct,2)}% when the minimum's ${fmt(lo,2)}%. It'll gel, it'll look fine, and it'll stay soft and sticky forever. Don't fuck this up.`)])}
+    else if(pct>hi+0.001){bump(pct>hi*1.3?"crit":"warn",T("Over-catalysed","Employee of the month my arse"));notes.push([pct>hi*1.3?"crit":"warn",T(`${fmt(pct,2)}% is above the ${fmt(hi,2)}% maximum. Expect a hot, fast kick, shrinkage and print-through, and brittle${kind==="mekp"&&p.cat==="resin"?" laminate that can crack or yellow":" cured material"}. Thick sections can exotherm badly.`,`${fmt(pct,2)}% when the max is ${fmt(hi,2)}%. It'll kick like a mule, smoke, shrink, print through and crack. A thick bucket can cook off properly, so keep it outside and away from anything that burns. Claire at HR will have a lot of justifying to do.`)])}
+    else if(manual)notes.push(["",pct>rec?T("Above the recommended ratio: shorter working time and a hotter cure. Fine for thin work in cool weather.","More than it should be. Faster and hotter. Fine for thin stuff on a cold morning, stupid on a hot afternoon."):T("Below the recommended ratio: longer working time but a slower, cooler cure. Give it longer before demoulding or sanding.","Less than it should be. More time, slower cure. Don't go yanking it off the mould at smoko.")]);
+    if(kind==="mekp"&&massG>=5000&&(pct>hi+0.001||(t>=28&&pct>=rec+0.5))){bump("crit",T("Runaway exotherm risk","Noodle soup time"));notes.push(["crit",T(`${fmt(massG/1000,0)} kg at ${fmt(pct,2)}% and ${t} °C can run away in the pot. It gels in about ${dur(gt)}, then the heat keeps building well after that: it will foam, smoke and can ignite. Don't walk away once it has gelled. If it starts, carry it outside away from anything combustible and drown it in water. Keep your face out of the fumes.`,`${fmt(massG/1000,0)} kg at ${fmt(pct,2)}% on a ${t} °C day is going to cook. It goes off in about ${dur(gt)}, and that's just the warm-up: the real heat comes after. When it starts smoking, don't stand there heating your noodle soup over it. Run, you twat. Get it outside, away from anything that burns, and drown it in water. Face out of the fumes.`)])}
+    $("pct").innerHTML=`${fmt(pct,2)}<small>%</small>`;
+    $("what").innerHTML=(shopMode()?`${manual?"What you've set":"What you should use"}: ${kind==="bpo"?"cream":"kicker"} by weight of ${p.cat==="paste"?"paste":"resin"}`:`${manual?"Your setting":"Recommended"}: ${kind==="bpo"?"BPO cream":"MEKP"} by weight of ${p.cat==="paste"?"paste":"resin"}`)+(state.manual!=null&&Math.abs(pct-rec)>0.001?"":chip(ratioK));
+    const cold=t<minT;
+    const gelL=T("Gel time","Goes off in"),workL=kind==="bpo"?T("Spreading time","Spread it in"):T("Working time","You've got");
+    const tc=cold?`<div><dt>${gelL}</dt><dd>${T("Unreliable","Not happening")}<small>${T("too cold to cure","too bloody cold")}</small></dd></div><div><dt>${workL}</dt><dd>–</dd></div>`
+      :`<div><dt>${gelL}${chip(timeK)}</dt><dd>${dur(gt)}<small>${span(gt)}</small></dd></div><div><dt>${workL}${chip("est")}</dt><dd>${dur(gt*0.75)}<small>${T("about ¾ of gel time","then it's rubbish")}</small></dd></div>`;
+    if(kind==="mekp"){
+      const ml=g/1.17,drops=Math.round(ml*20);
+      html=`<div><dt>${T("Weight","Weigh out")}</dt><dd>${fmt(g,g<100?1:0)} g</dd></div><div><dt>${T("Volume","Or measure")}</dt><dd>${fmt(ml,ml<100?1:0)} ml${ml<5?`<small>≈ ${drops} ${T("drops","drops, if your hands don't shake")}</small>`:""}</dd></div>`+tc;
+    }else html=`<div><dt>${T("Cream","Squeeze out")}</dt><dd>${fmt(g,g<100?1:0)} g</dd></div><div><dt>${T("Total","All in")}</dt><dd>${fmt(massG+g,0)} g</dd></div>`+tc;
+    {
+      const srcs=[p.src?T(`gel figure from ${p.src}`,`gel figure off the ${p.src}`):T("gel figure is typical for this product type","gel figure is a guess for this kind of stuff"),hd.est?T(`${hd.name} speed is a typical estimate`,`${hd.name} speed is a guess too`):null].filter(Boolean);
+      notes.push(["",T(`Times can be out by a third either way between brands (${srcs.join("; ")}). Check them against your product's TDS.`,`Times can be a third out either way depending on the brand (${srcs.join("; ")}). The TDS knows better than both of us.`)]);
+    }
+    if(massG>500&&kind==="mekp")notes.push(["",T("A big pot holds its heat and kicks faster than a thin laminate. The gel time allows for that; resin on the job stays workable a little longer than the bucket.","A full bucket cooks itself and goes off before the laminate does. The number allows for it. Don't stand there admiring it.")]);
+    if(td.pct&&p.min!==p.max)notes.push(["",T(`Ratio worked out from your data sheet: ${fmt(td.pct,2)}% at ${fmt(td.t,0)} °C, adjusted for today's temperature.`,`Ratio bent to your sheet's ${fmt(td.pct,2)}% at ${fmt(td.t,0)} °C. Hope you read it right.`)]);
+    if(td.gel)notes.push(["",T(`Gel time worked out from your data sheet: ${fmt(td.gel,0)} min at ${fmt(td.t,0)} °C${td.pct?` and ${fmt(td.pct,2)}%`:""}, for a 100 g cup.`,`Gel time off your sheet's ${fmt(td.gel,0)} min at ${fmt(td.t,0)} °C. If the sheet's wrong, blame the sheet.`)]);
+    drawChart(p,t,rh,minT,pct);
+  }
+  notes.unshift(["",T(p.note,p.shop)]);
+  $("amounts").innerHTML=html;
+  $("notes").innerHTML=notes.map(([c,n])=>`<li class="${c}">${n}</li>`).join("");
+  const s=$("status");s.className="status "+level;s.textContent=label;
+  const qp=$("quip");qp.hidden=!shopMode();
+  if(shopMode()){if(quipLevel!==level){const a=QUIPS[level];quipText=a[Math.floor(Math.random()*a.length)];quipLevel=level}qp.textContent=quipText}
+  $("pct").style.color=level==="crit"?"var(--crit)":"var(--accent)";
+  try{localStorage.setItem("lcc-v5",JSON.stringify(state))}catch(e){}
+}
+
+function drawChart(p,t,rh,minT,pct){
+  const W=340,H2=170,L=34,R=10,T=10,B=26,x0=10,x1=40;
+  const f=factorFor(p),yMax=Math.max(4,Math.ceil(p.max*f*2)/2);
+  const X=v=>L+(v-x0)/(x1-x0)*(W-L-R),Y=v=>T+(1-v/yMax)*(H2-T-B);
+  let s=`<rect x="${X(x0)}" y="${T}" width="${Math.max(0,X(Math.max(x0,Math.min(x1,minT)))-X(x0))}" height="${H2-T-B}" fill="var(--crit-bg)"/>`;
+  for(let v=0;v<=yMax;v+=1)s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="10" font-family="JetBrains Mono,monospace" fill="var(--muted)">${v}%</text>`;
+  for(let v=10;v<=40;v+=10)s+=`<text x="${X(v)}" y="${H2-8}" text-anchor="middle" font-size="10" font-family="JetBrains Mono,monospace" fill="var(--muted)">${v}°</text>`;
+  let d="";for(let v=x0;v<=x1;v+=0.5)d+=(d?"L":"M")+X(v).toFixed(1)+" "+Y(ratioAt(p,v,0)).toFixed(1);
+  s+=`<path d="${d}L${X(x1)} ${Y(0)}L${X(x0)} ${Y(0)}Z" fill="var(--accent)" fill-opacity=".12"/><path d="${d}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  const tc=Math.min(x1,Math.max(x0,t));
+  s+=`<line x1="${X(tc)}" x2="${X(tc)}" y1="${T}" y2="${Y(0)}" stroke="var(--fg)" stroke-opacity=".35" stroke-dasharray="3 3"/><circle cx="${X(tc)}" cy="${Y(Math.min(yMax,pct))}" r="6" fill="var(--surface)" stroke="var(--fg)" stroke-width="2.5"/>`;
+  $("chart").innerHTML=s;
+}
+
+const staticEls=[...document.querySelectorAll("[data-shop]")];
+staticEls.forEach(el=>el.dataset.pro=el.innerHTML);
+function applyMode(){
+  const shop=shopMode();
+  document.documentElement.dataset.mode=state.mode;
+  staticEls.forEach(el=>el.innerHTML=shop?el.dataset.shop:el.dataset.pro);
+  $("mode-pro").setAttribute("aria-pressed",String(!shop));$("mode-shop").setAttribute("aria-pressed",String(shop));
+  quipLevel=null;
+}
+for(const m of ["pro","shop"])$("mode-"+m).addEventListener("click",()=>{state.mode=m;applyMode();buildProducts();buildHardeners();render()});
+for(const c of ["resin","paste"])$("tab-"+c).addEventListener("click",()=>{
+  if(state.cat===c)return;state.cat=c;
+  if(P[state.p].cat!==c)state.p=Object.keys(P).find(k=>P[k].cat===c);
+  state.manual=null;loadTds();buildProducts();buildHardeners();render();
+});
+$("products").addEventListener("change",e=>{state.p=e.target.value;state.manual=null;loadTds();buildHardeners();render()});
+$("hardeners").addEventListener("change",e=>{state.h[state.p]=e.target.value;state.manual=null;render()});
+$("pctR").addEventListener("input",e=>{state.manual=+e.target.value;render()});
+$("pctReset").addEventListener("click",()=>{state.manual=null;render()});
+$("temp").addEventListener("input",e=>{state.t=+e.target.value;render()});
+$("rh").addEventListener("input",e=>{state.rh=+e.target.value;render()});
+$("unit").addEventListener("change",e=>{state.unit=e.target.value;render()});
+for(const k of ["batch","ratio","epl"])$(k).addEventListener("input",e=>{state[k]=e.target.value;render()});
+for(const [id,k] of [["tdsPct","pct"],["tdsT","t"],["tdsGel","gel"]])$(id).addEventListener("input",e=>{(state.tds[state.p]=state.tds[state.p]||{})[k]=e.target.value;state.manual=null;render()});
+function loadTds(){const d=state.tds[state.p]||{};$("tdsPct").value=d.pct||"";$("tdsT").value=d.t||"";$("tdsGel").value=d.gel||""}
+
+state.cat=P[state.p].cat;
+$("temp").value=state.t;$("rh").value=state.rh;$("unit").value=state.unit;
+for(const k of ["batch","ratio","epl"])$(k).value=state[k];
+loadTds();
+applyMode();buildProducts();buildHardeners();render();
+</script>
+
+<script>
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+</script>
+
+</body>
+</html>
