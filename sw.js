@@ -1,6 +1,6 @@
 // Offline support. Bump VERSION every time you upload a changed file,
 // or phones will keep running the old copy.
-const VERSION = "catalyst-v1";
+const VERSION = "catalyst-v2";
 const FILES = [
   "./",
   "index.html",
