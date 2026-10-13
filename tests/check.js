@@ -39,20 +39,20 @@ const within = (name, got, lo, hi) => ok(name, got >= lo && got <= hi, `got ${go
 
 // Published reference figures. Tolerance: 20% either side, the spread seen between brands.
 const ref = [
-  ["Easy Composites GP, 23 °C, 1%", { p: "ortho", h: "m50", t: 23, pct: 1 }, "Gel time", 20],
-  ["Easy Composites GP, 23 °C, 1.25% (known outlier: Silpak gives 15 min here)", { p: "ortho", h: "m50", t: 23, pct: 1.25 }, "Gel time", 13, 0.3],
-  ["Easy Composites GP, 23 °C, 1.5%", { p: "ortho", h: "m50", t: 23, pct: 1.5 }, "Gel time", 12],
-  ["Easy Composites GP, 23 °C, 1.75%", { p: "ortho", h: "m50", t: 23, pct: 1.75 }, "Gel time", 11],
-  ["Easy Composites GP, 23 °C, 2%", { p: "ortho", h: "m50", t: 23, pct: 2 }, "Gel time", 10],
-  ["Silpak SLR-22, 25 °C, 1.25%", { p: "ortho", h: "m50", t: 25, pct: 1.25 }, "Gel time", 15],
-  ["Easy Composites IP2, 20 °C, 1%", { p: "inf", h: "m50", t: 20, pct: 1 }, "Gel time", 85],
-  ["Easy Composites IP2, 20 °C, 2%", { p: "inf", h: "m50", t: 20, pct: 2 }, "Gel time", 48],
-  ["Crestomer 1152PA, 25 °C, 2%", { p: "ua", h: "m50", t: 25 }, "Gel time", 50],
-  ["Mipa P50 filler, 20 °C, 2% (TDS 4 to 5 min)", { p: "bog", t: 20, pct: 2 }, "Gel time", 4.5],
-  ["West 205, 22 °C (TDS 9 to 12 min)", { p: "epoxy", h: "w205", t: 22, b: 83 }, "Pot life in the cup", 10.5],
-  ["West 209, 22 °C (TDS 40 to 50 min)", { p: "epoxy", h: "w209", t: 22, b: 75 }, "Pot life in the cup", 45],
-  ["West 209, 35 °C (TDS 15 to 20 min)", { p: "epoxy", h: "w209", t: 35, b: 75 }, "Pot life in the cup", 17.5],
-  ["Crestabond M1-05, 22 °C (TDS 4 to 7 min)", { p: "mma", h: "mma5", t: 22 }, "Working time", 5.5]
+  ["Easy Composites GP, 23 °C, 1%", { p: "ortho", h: "m50", t: 23, pct: 1 }, "Typical gel time", 20],
+  ["Easy Composites GP, 23 °C, 1.25% (known outlier: Silpak gives 15 min here)", { p: "ortho", h: "m50", t: 23, pct: 1.25 }, "Typical gel time", 13, 0.3],
+  ["Easy Composites GP, 23 °C, 1.5%", { p: "ortho", h: "m50", t: 23, pct: 1.5 }, "Typical gel time", 12],
+  ["Easy Composites GP, 23 °C, 1.75%", { p: "ortho", h: "m50", t: 23, pct: 1.75 }, "Typical gel time", 11],
+  ["Easy Composites GP, 23 °C, 2%", { p: "ortho", h: "m50", t: 23, pct: 2 }, "Typical gel time", 10],
+  ["Silpak SLR-22, 25 °C, 1.25%", { p: "ortho", h: "m50", t: 25, pct: 1.25 }, "Typical gel time", 15],
+  ["Easy Composites IP2, 20 °C, 1%", { p: "inf", h: "m50", t: 20, pct: 1 }, "Typical gel time", 85],
+  ["Easy Composites IP2, 20 °C, 2%", { p: "inf", h: "m50", t: 20, pct: 2 }, "Typical gel time", 48],
+  ["Crestomer 1152PA, 25 °C, 2%", { p: "ua", h: "m50", t: 25 }, "Typical gel time", 50],
+  ["Mipa P50 filler, 20 °C, 2% (TDS 4 to 5 min)", { p: "bog", t: 20, pct: 2 }, "Typical gel time", 4.5],
+  ["West 205, 22 °C (TDS 9 to 12 min)", { p: "epoxy", h: "w205", t: 22, b: 83 }, "Typical pot life", 10.5],
+  ["West 209, 22 °C (TDS 40 to 50 min)", { p: "epoxy", h: "w209", t: 22, b: 75 }, "Typical pot life", 45],
+  ["West 209, 35 °C (TDS 15 to 20 min)", { p: "epoxy", h: "w209", t: 35, b: 75 }, "Typical pot life", 17.5],
+  ["Crestabond M1-05, 22 °C (TDS 4 to 7 min)", { p: "mma", h: "mma5", t: 22 }, "Typical working time", 5.5]
 ];
 for (const [name, c, cell, val, tol = 0.2] of ref) {
   const r = run(c); within(name, minutes(r.cells[cell]), +(val * (1 - tol)).toFixed(1), +(val * (1 + tol)).toFixed(1));

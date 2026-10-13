@@ -159,7 +159,7 @@ body.locked{overflow:hidden}
   <header>
     <div class="eyebrow" data-shop="Goo · Gunk · The stuff that bites">Resins · Pastes · Hardeners</div>
     <h1 data-shop='How Much Bloody Kicker <span class="beta">Beta: still being tested</span>'>Laminator's Catalyst Calculator <span class="beta">Beta version</span></h1>
-    <p class="sub" data-shop="Pick your poison, tell it how shit the weather is, and it'll tell you how much kicker to chuck in and how long before it goes off in the bucket. Read all of it. Yes, the bottom bit too.">Pick the product and the hardener on the shelf, set the shop conditions and batch, and get the ratio, the amount to measure and how long you have.</p>
+    <p class="sub" data-shop="Pick your poison, tell it how shit the weather is, and it'll tell you how much kicker to chuck in and how long before it goes off in the bucket. Read all of it. Yes, the bottom bit too.">A trade reference for catalyst ratios and cure times, built by a boatbuilder with decades on the tools. It shows typical figures for your conditions and explains them. Your product's data sheet always has the final word.</p>
   </header>
 
   <div class="grid">
@@ -243,20 +243,20 @@ body.locked{overflow:hidden}
         <label class="label" for="pctR"><span data-shop="Kicker">Catalyst ratio</span> <span class="readout" id="pctOut"></span></label>
         <input type="range" id="pctR" min="1" max="4" step="0.05">
         <div class="scale" id="pctScale"></div>
-        <div class="recline"><span id="pctRec"></span><button type="button" id="pctReset" data-shop="Put it back how it was">Back to recommended</button></div>
+        <div class="recline"><span id="pctRec"></span><button type="button" id="pctReset" data-shop="Put it back how it was">Back to typical</button></div>
       </div>
       <p class="locked" id="ratioFixed" hidden></p>
       <dl class="amounts" id="amounts"></dl>
       <p class="help" data-shop='<span class="q data" style="margin:0 4px 0 0">Checked</span> came off a real data sheet. <span class="q est" style="margin:0 4px 0 0">Educated guess</span> is exactly that. <span class="q user" style="margin:0 4px 0 0">Your problem</span> is whatever you typed in, so if it is wrong, that is on you.'><span class="q data" style="margin:0 4px 0 0">TDS-based</span> starts from a published data sheet figure, scaled to your conditions. <span class="q est" style="margin:0 4px 0 0">Estimate</span> is a typical value with no published figure behind it. <span class="q user" style="margin:0 4px 0 0">Your figure</span> comes from what you entered.</p>
       <figure class="chart" id="chartWrap">
         <svg id="chart" viewBox="0 0 340 170" role="img" aria-label="Catalyst ratio against temperature"></svg>
-        <figcaption data-shop="The line is what you should be doing. The dot is what you are actually doing. The red bit is too cold, so go home.">The line is the recommended ratio across temperatures. The dot is your ratio at your shop temperature; the shaded strip is too cold to cure.</figcaption>
+        <figcaption data-shop="The line is what you should be doing. The dot is what you are actually doing. The red bit is too cold, so go home.">The line is the typical ratio across temperatures. The dot is your ratio at your shop temperature; the shaded strip is too cold to cure.</figcaption>
       </figure>
       <ul class="notes" id="notes"></ul>
     </section>
   </div>
 
-  <p class="disclaimer" data-shop="This is a calculator, not your mum. The TDS outranks it, the supervisor outranks the TDS, and Claire at HR outranks everyone. Cup test anything new before you glass a hull with it, and wear the bloody gloves. MEKP in the eye means hospital, not a funny story.">Ratios are typical workshop values for promoted resins. Gel times come from a model fitted to published data sheet figures; products and hardener grades marked as typical have no published figure behind them yet. The supplier's TDS always takes priority, and the hardener a product's TDS names is the one to use. Run a cup test on any new batch before committing a part.</p>
+  <p class="disclaimer" data-shop="This is a calculator, not your mum. The TDS outranks it, the supervisor outranks the TDS, and Claire at HR outranks everyone. Cup test anything new before you glass a hull with it, and wear the bloody gloves. MEKP in the eye means hospital, not a funny story.">Ratios are typical workshop values for promoted resins. Gel times come from a model fitted to published data sheet figures; figures marked Estimate have no published figure behind them yet. The supplier's TDS always takes priority, and the hardener a product's TDS names is the one to use. Run a cup test on any new batch before committing a part.</p>
   <p class="disclaimer"><button type="button" class="linkbtn" id="openTerms">Disclaimer and conditions of use</button></p>
 </div>
 
@@ -324,56 +324,56 @@ const C={
    gel = minutes to gel, 100 g at 25 °C with refPct of a standard hardener.  src = where that figure comes from. */
 const P={
   ortho:{dens:1.1,cat:"resin",name:"Ortho laminating resin",ex:"Crystic, Polylite, Synolite, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:17,refPct:1,src:"Easy Composites GP resin TDS",hard:MEKP_POLY,def:"m50",
-    note:"Hand lay-up and spray-up. Don't drop below 0.8% to buy time; the laminate stays green and soft.",
+    note:"For hand lay-up and spray-up. Below about 0.8% the laminate typically stays green and soft, so lowering the ratio isn't a reliable way to buy time.",
     shop:"Bread and butter. Don't go under 0.8% to buy time; it stays green and you get to explain why the hull's bendy."},
   iso:{dens:1.1,cat:"resin",name:"Iso laminating resin",ex:"Crystic, Polylite, Aropol, Norpol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:20,refPct:1,hard:MEKP_POLY,def:"m50",
     note:"Better water and chemical resistance than ortho. Usual choice for the skin coat behind gelcoat below the waterline.",
     shop:"Ortho's posh cousin. Takes water better, so it goes behind the gelcoat below the waterline."},
   dcpd:{dens:1.1,cat:"resin",name:"DCPD laminating resin",ex:"Polylite, Synolite, Aropol",kind:"mekp",curve:C.gp,min:0.8,max:2.5,minT:15,gel:22,refPct:1,hard:MEKP_POLY,def:"m50",
-    note:"Low shrink and fast wet-out, good for cosmetics. More brittle than ortho, so keep it out of structural layers.",
+    note:"Low shrink and fast wet-out make it good for cosmetic layers. It is more brittle than ortho, so it is normally kept out of structural layers.",
     shop:"Wets out fast, barely shrinks, snaps like a biscuit. Cosmetic layers only, not the stuff holding the boat together."},
   inf:{dens:1.1,cat:"resin",name:"Infusion resin",ex:"Crystic, Synolite, Polylite infusion grades",kind:"mekp",curve:C.inf,min:0.8,max:2.0,minT:16,gel:55,refPct:1,src:"Easy Composites IP2 TDS",hard:["lpt","m50","n9h","kp9","mec"],def:"lpt",
-    note:"Set gel time against your fill time with margin to spare. Cup test from the drum you're feeding before you open the line.",
+    note:"Gel time is normally set well beyond the expected fill time. A cup test from the drum being fed is the usual check before the line is opened.",
     shop:"Know your fill time and give yourself slack. Gel it halfway up the part and enjoy grinding out a dry patch the size of a car bonnet."},
   ve:{dens:1.05,cat:"resin",name:"Vinyl ester",ex:"Derakane, Atlac, Dion, Crystic VE",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:30,refPct:1,hard:MEKP_VE,def:"n925h",
-    note:"Fussier in the cold than polyester and prone to foaming with high-H₂O₂ MEKP. Use the grade the TDS names.",
+    note:"Less tolerant of cold than polyester, and prone to foaming with high-H₂O₂ MEKP. The catalyst grade named on the TDS is the one to use.",
     shop:"Hates the cold, foams if you look at it funny. Use the kicker the TDS names, not whatever's closest to your hand."},
   gelc:{dens:1.25,cat:"resin",name:"Gelcoat",ex:"Crystic, Polycor, Norpol, Maxguard",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:32,refPct:1,hard:MEKP_GEL,def:"n925h",
-    note:"Never below 1.2%. Under-catalysed gelcoat stays soft, prints through and blisters. High-H₂O₂ MEKP causes porosity.",
+    note:"Below 1.2%, gelcoat typically stays soft, prints through and blisters later. High-H₂O₂ MEKP can cause porosity.",
     shop:"Never under 1.2%. Soft gelcoat blisters, prints through and comes back to haunt you at the warranty claim."},
   flow:{dens:1.25,cat:"resin",name:"Flowcoat / topcoat",ex:"Crystic, Polycor, Norpol",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
     note:"Waxed to cure tack-free in air. The wax layer has to be sanded off before anything bonds to it.",
     shop:"Waxed so it cures in air. Sand the wax off before you stick anything to it, or it falls off and you look stupid."},
   epoxy:{dens:1.15,cat:"resin",name:"Epoxy laminating",ex:"West System, Gurit Ampreg, Sicomin, Pro-Set",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
-    note:"Weigh or pump, never eyeball. Extra hardener doesn't speed epoxy up; it leaves the cure soft. Change hardener speed instead.",
+    note:"Epoxy is measured by weight or with calibrated pumps. Extra hardener doesn't speed it up; it leaves the cure soft. Timing is adjusted by hardener speed instead.",
     shop:"Weigh it or pump it. Never eyeball it. More hardener isn't faster, it's just shit."},
 
   bog:{dens:1.5,cat:"paste",name:"Polyester body filler",ex:"U-Pol, Isopon P38, 3M",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:3.2,refPct:2,src:"Mipa P50 TDS",hard:["bpo"],def:"bpo",
-    note:"Mix until the colour is even. Any streak is an uncured spot.",
+    note:"An even colour with no streaks shows the cream is fully mixed. Streaks are typically uncured spots.",
     shop:"Mix till it's one colour. Streaks are soft spots, and soft spots are callbacks."},
   easy:{dens:0.9,cat:"paste",name:"Lightweight easy-sand filler",ex:"U-Pol, Isopon, 3M lightweight grades",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
-    note:"Microballoon filler that sands easily. Porous, so seal it before paint or gelcoat goes on.",
+    note:"Microballoon filler that sands easily. It is porous, so it is normally sealed before paint or gelcoat.",
     shop:"Sands like a dream, drinks everything like a sponge. Seal it before paint."},
   fibre:{dens:1.4,cat:"paste",name:"Fibre-reinforced filler",ex:"Isopon P40, U-Pol Fibral",kind:"bpo",curve:C.bpo,min:1.0,max:3.0,minT:10,gel:4,refPct:2,hard:["bpo"],def:"bpo",
-    note:"Strand-filled for bridging holes and building thickness. Fold the hardener through rather than whipping it.",
+    note:"Strand-filled for bridging holes and building thickness. Folding the hardener through, rather than whipping it, avoids trapping air.",
     shop:"Hairy bog. Fold the cream through, don't whip it like you're making a pavlova."},
   gpaste:{dens:1.3,cat:"paste",name:"Gelcoat repair paste",ex:"Crystic, Polycor, thickened gelcoat",kind:"mekp",curve:C.gel,min:1.2,max:3.0,minT:16,gel:30,refPct:1,hard:MEKP_GEL,def:"m50",
-    note:"For chips and edges. Cure it under film or wax solution, or the surface stays tacky.",
+    note:"For chips and edges. It needs to cure under film or wax solution, or the surface stays tacky.",
     shop:"For chips and dings. Cover it with film or wax or it stays tacky until the heat death of the universe."},
   pbond:{dens:1.3,cat:"paste",name:"Polyester bonding paste",ex:"Crystic, Polylite, Norpol core bonds",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:15,gel:40,refPct:1,hard:MEKP_POLY,def:"m50",
-    note:"For core and secondary bonding. Grind and wipe the bond line; it won't stick to waxed or contaminated laminate.",
+    note:"For core and secondary bonding. It won't bond to waxed or contaminated laminate, so the bond line is normally ground and wiped first.",
     shop:"Grind it, wipe it, then bond it. It won't stick to wax, dust or optimism."},
   vbond:{dens:1.3,cat:"paste",name:"Vinyl ester bonding paste",ex:"Derakane, Atlac, Crystic VE pastes",kind:"mekp",curve:C.ve,min:1.0,max:2.5,minT:16,gel:45,refPct:1,hard:MEKP_VE,def:"n925h",
     note:"Tougher than polyester paste for stringers and bulkheads. Same foaming caution as vinyl ester resin.",
     shop:"The tough stuff for stringers and bulkheads. Foams like vinyl ester does, because it is vinyl ester."},
   ua:{dens:1.1,cat:"paste",name:"Crestomer 1152PA",ex:"Scott Bader urethane acrylate adhesive",kind:"mekp",curve:C.fixed2,min:2,max:2,minT:15,gel:50,refPct:2,src:"Crestomer 1152PA TDS",ratioSrc:1,hard:["m50","kp9","m50r"],def:"m50",
-    note:"Fixed at 2% MEKP. Work between 18 and 25 °C and never below 15 °C.",
+    note:"Fixed at 2% MEKP. The manufacturer specifies 18 to 25 °C, and never below 15 °C.",
     shop:"2%. Between 18 and 25 °C. Never below 15. It's not complicated."},
   mma:{dens:1.0,cat:"paste",name:"MMA structural adhesive",ex:"Crestabond, Plexus, SikaFast",kind:"mma",minT:18,hard:["mma5","mmac"],def:"mma5",
-    note:"Dispense through the static mixer and throw the first bead away. Clamp within the working time and leave it until fixture.",
+    note:"Dispensed through a static mixer, with the first bead normally discarded. Parts are clamped within the working time and left undisturbed until fixture.",
     shop:"Bin the first squirt out of the nozzle. Clamp it in time, then leave it alone. Yes, you."},
   fair:{dens:1.15,cat:"paste",name:"Epoxy fairing compound",ex:"West 105 with 407 or 410, Gurit fairing",kind:"epoxy",minT:10,hard:["w205","w206","w209","epc"],def:"w206",
-    note:"Mix resin and hardener fully before adding filler. Thicken to peanut-butter consistency for vertical work.",
+    note:"Resin and hardener are mixed fully before filler goes in. Peanut-butter consistency is typical for vertical work.",
     shop:"Resin and hardener mixed properly first, then the filler. Peanut butter for vertical, unless you enjoy sweeping it off the floor."}
 };
 
@@ -456,26 +456,26 @@ function render(){
   const massG=state.unit==="g"?b:state.unit==="kg"?b*1000:b*1000*dens;
   const volML=state.unit==="L"?b*1000:massG/dens;
 
-  const notes=[];let level="good",label=kind==="mma"?T("Good to bond","Glue it"):kind==="bpo"?T("Good to fill","Slap it on"):T("Good to lay up","Crack on");
+  const notes=[];let level="good",label=kind==="mma"?T("Within typical range","Glue it"):kind==="bpo"?T("Within typical range","Slap it on"):T("Within typical range","Crack on");
   const bump=(lv,lab)=>{const r={good:0,warn:1,crit:2};if(r[lv]>r[level]){level=lv;label=lab}};
   const minT=Math.max(p.minT,hd.minT||0);
-  if(t<minT){bump("crit",T("Too cold","Nothing's curing today"));notes.push(["crit",T(`Below ${minT} °C this won't cure properly${peroxide?" however much hardener goes in":""}. Warm the shop and the materials first.`,`Under ${minT} °C this shit won't cure${peroxide?", no matter how much kicker you drown it in":""}. Heat the shed, heat the materials, or go home.`)])}
+  if(t<minT){bump("crit",T("Below typical cure temperature","Nothing's curing today"));notes.push(["crit",T(`Below ${minT} °C this product typically won't cure properly${peroxide?", however much hardener is added":""}: the reaction slows too much to complete. Manufacturers generally recommend warming both the workshop and the materials.`,`Under ${minT} °C this shit won't cure${peroxide?", no matter how much kicker you drown it in":""}. Heat the shed, heat the materials, or go home.`)])}
   if(kind==="epoxy"){if(rh>=80){bump("warn",T("Amine blush risk","Blush incoming"));notes.push(["warn",T("Above 80% humidity epoxy is prone to amine blush. Wash the cured surface with water and a scotchbrite before sanding or recoating.","Over 80% humidity epoxy grows a greasy blush. Wash it off with water and a scotchbrite before you sand, or enjoy watching the next coat peel.")])}}
   else if(kind!=="mma"){
-    if(rh>=85){bump("crit",T("Too humid","Swamp conditions"));notes.push(["crit",T("At 85% humidity and above, moisture inhibits the cure and gelcoat can stay tacky. Wait for drier air or dehumidify.","85% humidity. The resin's going to sulk and the gelcoat stays tacky. Dehumidify, or knock off and come back when it's not a sauna.")])}
-    else if(rh>=75){bump("warn",T("Humid: watch the cure","Muggy as"));notes.push(["warn",T("High humidity slows the surface cure.","Muggy. The surface cure drags its feet.")+(kind==="mekp"&&p.min!==p.max?T(" The ratio already includes a small increase for it."," Already chucked a bit more kicker in for you. You're welcome."):"")])}
+    if(rh>=85){bump("crit",T("Humidity above typical limit","Swamp conditions"));notes.push(["crit",T("At 85% humidity and above, moisture typically inhibits the surface cure and gelcoat can stay tacky. Manufacturers generally advise waiting for drier conditions or dehumidifying.","85% humidity. The resin's going to sulk and the gelcoat stays tacky. Dehumidify, or knock off and come back when it's not a sauna.")])}
+    else if(rh>=75){bump("warn",T("High humidity","Muggy as"));notes.push(["warn",T("High humidity slows the surface cure.","Muggy. The surface cure drags its feet.")+(kind==="mekp"&&p.min!==p.max?T(" The typical ratio shown includes a small increase for it."," Already chucked a bit more kicker in for you. You're welcome."):"")])}
   }
-  if(t>32){bump("warn",T("Hot: short pot life","Hot as hell, work fast"));notes.push(["warn",T("Above 32 °C pot life drops fast. Mix smaller batches and keep everything out of the sun.","Over 32 °C the pot life goes to shit. Small batches, out of the sun, and save the chat for smoko.")])}
-  if(t-dp<3&&t>=minT){bump("warn",T("Condensation risk","Everything's sweating"));notes.push(["warn",T("Air is within 3 °C of its dew point. Check moulds and core aren't damp before you start.","Air's within 3 °C of its dew point. Feel the mould. If it's damp, you're laminating onto a puddle.")])}
+  if(t>32){bump("warn",T("High temperature","Hot as hell, work fast"));notes.push(["warn",T("Above 32 °C pot life shortens quickly, because the reaction roughly doubles in speed every 8 to 10 °C. Smaller batches and keeping materials out of direct sun are the usual practice.","Over 32 °C the pot life goes to shit. Small batches, out of the sun, and save the chat for smoko.")])}
+  if(t-dp<3&&t>=minT){bump("warn",T("Condensation risk","Everything's sweating"));notes.push(["warn",T("Air is within 3 °C of its dew point, so cold moulds and core can collect moisture. Checking surfaces are dry is the usual precaution.","Air's within 3 °C of its dew point. Feel the mould. If it's damp, you're laminating onto a puddle.")])}
 
-  if(kind==="mekp"&&t>=29&&hd.f<=1){const s=p.hard.find(k=>H[k].f>1);if(s)notes.push(["tip",T(`It's hot. ${H[s].name} gives you a longer gel at the same ratio.`,`Hot one. Grab the ${H[s].name}: same ratio, more time before it goes off in your hand.`)])}
-  if(kind==="mekp"&&t<18&&hk!=="mec"&&p.hard.includes("mec"))notes.push(["tip",T("It's cool. Norox MEC is less affected by temperature and cures better in thin films.","Cold one. Norox MEC doesn't sulk in the cold like the others.")]);
-  if(kind==="epoxy"&&t>=28&&hk==="w205")notes.push(["tip",T("It's warm for 205 Fast. 206 or 209 will give you a usable pot life.","205 in this heat? Bold. Grab 206 or 209 unless you fancy chiselling your mixing pot.")]);
-  if(kind==="epoxy"&&!custom&&hd.minT>t)notes.push(["tip",T(`Too cool for ${hd.name}. 205 Fast cures down to 4 °C.`,`Too cold for ${hd.name}. 205 Fast will go down to 4 °C.`)]);
+  if(kind==="mekp"&&t>=29&&hd.f<=1){const s=p.hard.find(k=>H[k].f>1);if(s)notes.push(["tip",T(`${H[s].name} is a slower grade. At the same ratio it typically gives a longer gel time in hot conditions.`,`Hot one. Grab the ${H[s].name}: same ratio, more time before it goes off in your hand.`)])}
+  if(kind==="mekp"&&t<18&&hk!=="mec"&&p.hard.includes("mec"))notes.push(["tip",T("In cool conditions, Norox MEC is typically less affected by temperature and cures better in thin films.","Cold one. Norox MEC doesn't sulk in the cold like the others.")]);
+  if(kind==="epoxy"&&t>=28&&hk==="w205")notes.push(["tip",T("205 Fast has a short pot life in warm conditions. 206 and 209 are the slower options.","205 in this heat? Bold. Grab 206 or 209 unless you fancy chiselling your mixing pot.")]);
+  if(kind==="epoxy"&&!custom&&hd.minT>t)notes.push(["tip",T(`${hd.name} is rated for use above ${hd.minT} °C. 205 Fast is rated down to 4 °C.`,`Too cold for ${hd.name}. 205 Fast will go down to 4 °C.`)]);
 
   const sl=(hd.sl||p.sl||[1,4]).slice();
   if(p.min!=null)sl[0]=Math.min(sl[0],r05(limitsOf(p)[0]));
-  const fixedMsg=kind==="epoxy"?T("Fixed ratio. Epoxy cures by matching resin and hardener molecule for molecule, so more or less hardener weakens it. Change hardener speed instead.","Fixed ratio. Epoxy isn't polyester; you can't just chuck more in. More hardener means a soft, crap cure. Want it faster? Change the hardener.")
+  const fixedMsg=kind==="epoxy"?T("Fixed ratio. Epoxy cures by matching resin and hardener molecule for molecule, so more or less hardener weakens it. Timing is adjusted by choosing a faster or slower hardener.","Fixed ratio. Epoxy isn't polyester; you can't just chuck more in. More hardener means a soft, crap cure. Want it faster? Change the hardener.")
     :kind==="mma"?T("Fixed 10:1 by volume through the mixer nozzle. The ratio isn't adjustable.","10:1 through the nozzle. Don't touch it. Seriously.")
     :p.min===p.max?T(`Fixed at ${fmt(p.min,0)}% by the manufacturer. Adjusting it compromises the bond.`,`${fmt(p.min,0)}%. Not a suggestion. Fiddle with it and the bond's buggered.`):null;
   $("ratioCtl").hidden=!!fixedMsg;$("ratioFixed").hidden=!fixedMsg;if(fixedMsg)$("ratioFixed").textContent=fixedMsg;
@@ -488,14 +488,14 @@ function render(){
     const pl=potRef*massF(massG*1.2);
     $("pct").innerHTML=`${big}<small>${small}</small>`;$("what").innerHTML=what+chip(custom?"user":"data");
     html=`<div><dt>Resin</dt><dd>${resinTxt}</dd></div><div><dt>Hardener</dt><dd>${hardAmt}</dd></div>`+
-         `<div><dt>${T("Pot life in the cup","Cooks in the cup")}${chip(custom?"user":hd.est?"est":"data")}</dt><dd>${dur(pl)}<small>${span(pl)}</small></dd></div><div><dt>${T("Spread thin","Spread out")}${chip("est")}</dt><dd>${dur(pl*2.5)}<small>${T("roughly","ish")}</small></dd></div>`;
+         `<div><dt>${T("Typical pot life","Cooks in the cup")}${chip(custom?"user":hd.est?"est":"data")}</dt><dd>${dur(pl)}<small>${span(pl)}</small></dd></div><div><dt>${T("Typical spread thin","Spread out")}${chip("est")}</dt><dd>${dur(pl*2.5)}<small>${T("roughly","ish")}</small></dd></div>`;
     notes.push(["",T("Pot life scales from the data sheet figure, halving for every 10 °C rise. Spread into a roller tray, the working time runs well past the cup figure.","Pot life halves every 10 °C. Tip it into a roller tray and it lasts way longer. Leave it in the cup and it cooks, smokes and sets like a brick.")]);
   }else if(kind==="mma"){
     const w=custom?Math.max(1,parseFloat(state.epl)||10)*Math.pow(2,(25-t)/10):hd.work*Math.pow(2,(22-t)/10);
     const act=volML/10;
     $("pct").innerHTML=`10<small>:1</small>`;$("what").innerHTML=T("Adhesive to activator, by volume","Glue to activator, by volume")+chip("data");
     html=`<div><dt>${T("Adhesive","Glue")}</dt><dd>${fmt(volML,0)} ml</dd></div><div><dt>Activator</dt><dd>${fmt(act,act<100?1:0)} ml</dd></div>`+
-         `<div><dt>${T("Working time","Clamp within")}${chip(custom?"user":"data")}</dt><dd>${dur(w)}<small>${span(w)}</small></dd></div><div><dt>${T("Fixture","Hands off for")}${chip(custom?"est":"data")}</dt><dd>${dur(w*2.7)}<small>${T("roughly","ish")}</small></dd></div>`;
+         `<div><dt>${T("Typical working time","Clamp within")}${chip(custom?"user":"data")}</dt><dd>${dur(w)}<small>${span(w)}</small></dd></div><div><dt>${T("Typical fixture time","Hands off for")}${chip(custom?"est":"data")}</dt><dd>${dur(w*2.7)}<small>${T("roughly","ish")}</small></dd></div>`;
     notes.push(["",T("Cartridges meter the ratio for you. The amounts are for bulk packs dispensed by hand.","Cartridges do the ratio for you. These numbers are for the bulk-pack heroes.")]);
   }else{
     const rec=ratioAt(p,t,rh);
@@ -508,17 +508,17 @@ function render(){
     $("pctScale").innerHTML=[0,1,2,3].map(i=>`<span>${fmt(sl[0]+(sl[1]-sl[0])*i/3,1).replace(/\.0$/,"")}%</span>`).join("");
     $("pctOut").textContent=fmt(pct,2)+" %";
     const manual=state.manual!=null&&Math.abs(pct-rec)>0.001;
-    $("pctRec").textContent=manual?T(`Recommended for these conditions: ${fmt(rec,2)}%`,`Should be ${fmt(rec,2)}% in this weather`):T(`Set to the recommended ratio for these conditions${ratioK==="est"?" (a typical workshop value, not from a TDS)":""}`,`Set to what it should be${ratioK==="est"?" (workshop folklore, not off a TDS)":""}`);
+    $("pctRec").textContent=manual?T(`Typical for these conditions: ${fmt(rec,2)}%`,`Should be ${fmt(rec,2)}% in this weather`):T(`Set to the typical ratio for these conditions${ratioK==="est"?" (a workshop value, not from a TDS)":""}`,`Set to what it should be${ratioK==="est"?" (workshop folklore, not off a TDS)":""}`);
     $("pctReset").hidden=!manual;
     const [lo,hi]=limitsOf(p);
-    if(pct<lo-0.001){bump("crit",T("Under-catalysed","Gonna stay sticky"));notes.push(["crit",T(`${fmt(pct,2)}% is below the ${fmt(lo,2)}% minimum for ${p.name.toLowerCase()}. It may gel but won't reach full cure: soft, tacky and weak, and it can stay that way.`,`${fmt(pct,2)}% when the minimum's ${fmt(lo,2)}%. It'll gel, it'll look fine, and it'll stay soft and sticky forever. Don't fuck this up.`)])}
-    else if(pct>hi+0.001){bump(pct>hi*1.3?"crit":"warn",T("Over-catalysed","Employee of the month my arse"));notes.push([pct>hi*1.3?"crit":"warn",T(`${fmt(pct,2)}% is above the ${fmt(hi,2)}% maximum. Expect a hot, fast kick, shrinkage and print-through, and brittle${kind==="mekp"&&p.cat==="resin"?" laminate that can crack or yellow":" cured material"}. Thick sections can exotherm badly.`,`${fmt(pct,2)}% when the max is ${fmt(hi,2)}%. It'll kick like a mule, smoke, shrink, print through and crack. A thick bucket can cook off properly, so keep it outside and away from anything that burns. Claire at HR will have a lot of justifying to do.`)])}
-    else if(manual)notes.push(["",pct>rec?T("Above the recommended ratio: shorter working time and a hotter cure. Fine for thin work in cool weather.","More than it should be. Faster and hotter. Fine for thin stuff on a cold morning, stupid on a hot afternoon."):T("Below the recommended ratio: longer working time but a slower, cooler cure. Give it longer before demoulding or sanding.","Less than it should be. More time, slower cure. Don't go yanking it off the mould at smoko.")]);
-    if(kind==="mekp"&&massG>=5000&&(pct>hi+0.001||(t>=28&&pct>=rec+0.5))){bump("crit",T("Runaway exotherm risk","Noodle soup time"));notes.push(["crit",T(`${fmt(massG/1000,0)} kg at ${fmt(pct,2)}% and ${t} °C can run away in the pot. It gels in about ${dur(gt)}, then the heat keeps building well after that: it will foam, smoke and can ignite. Don't walk away once it has gelled. If it starts and the pot is still safe to pick up, carry it outside away from anything combustible and fill it with water. If it's too hot to handle, leave it, clear people out and flood it with water where it stands. Keep your face out of the fumes and follow your site's emergency procedure.`,`${fmt(massG/1000,0)} kg at ${fmt(pct,2)}% on a ${t} °C day is going to cook. It goes off in about ${dur(gt)}, and that's just the warm-up: the real heat comes after. When it starts smoking, don't stand there heating your noodle soup over it. Run, you twat. If you can still pick it up safely, get it outside, away from anything that burns, and fill it with water. If it's too hot to hold, leave it, get everyone out and flood it where it stands. Face out of the fumes, and follow the site emergency plan, not your mate's.`)])}
+    if(pct<lo-0.001){bump("crit",T("Below typical ratio range","Gonna stay sticky"));notes.push(["crit",T(`${fmt(pct,2)}% is below the typical minimum of ${fmt(lo,2)}% for ${p.name.toLowerCase()}. Below this, it typically gels but doesn't reach full cure, leaving it soft, tacky and weak, sometimes permanently.`,`${fmt(pct,2)}% when the minimum's ${fmt(lo,2)}%. It'll gel, it'll look fine, and it'll stay soft and sticky forever. Don't fuck this up.`)])}
+    else if(pct>hi+0.001){bump(pct>hi*1.3?"crit":"warn",T("Above typical ratio range","Employee of the month my arse"));notes.push([pct>hi*1.3?"crit":"warn",T(`${fmt(pct,2)}% is above the typical maximum of ${fmt(hi,2)}%. Above this, the cure is typically hot and fast, with shrinkage, print-through and brittle${kind==="mekp"&&p.cat==="resin"?" laminate that can crack or yellow":" cured material"}. Thick sections can overheat.`,`${fmt(pct,2)}% when the max is ${fmt(hi,2)}%. It'll kick like a mule, smoke, shrink, print through and crack. A thick bucket can cook off properly, so keep it outside and away from anything that burns. Claire at HR will have a lot of justifying to do.`)])}
+    else if(manual)notes.push(["",pct>rec?T("Above the typical ratio: shorter working time and a hotter cure. This is commonly used for thin work in cool weather.","More than it should be. Faster and hotter. Fine for thin stuff on a cold morning, stupid on a hot afternoon."):T("Below the typical ratio: longer working time but a slower, cooler cure, so parts typically need longer before demoulding or sanding.","Less than it should be. More time, slower cure. Don't go yanking it off the mould at smoko.")]);
+    if(kind==="mekp"&&massG>=5000&&(pct>hi+0.001||(t>=28&&pct>=rec+0.5))){bump("crit",T("Runaway exotherm risk","Noodle soup time"));notes.push(["crit",T(`${fmt(massG/1000,0)} kg at ${fmt(pct,2)}% and ${t} °C can run away in the pot. It typically gels in about ${dur(gt)}, and the heat keeps building well after that: it can foam, smoke and ignite, so a gelled pot still needs watching. Long-standing boatbuilding guidance (FAO) is to take a smoking pot outside, while it is still safe to handle, away from anything combustible, and fill it with water. If it is too hot to handle, the area is cleared and the pot flooded where it stands. Fumes are kept away from the face, and the site's emergency procedure applies.`,`${fmt(massG/1000,0)} kg at ${fmt(pct,2)}% on a ${t} °C day is going to cook. It goes off in about ${dur(gt)}, and that's just the warm-up: the real heat comes after. When it starts smoking, don't stand there heating your noodle soup over it. Run, you twat. If you can still pick it up safely, get it outside, away from anything that burns, and fill it with water. If it's too hot to hold, leave it, get everyone out and flood it where it stands. Face out of the fumes, and follow the site emergency plan, not your mate's.`)])}
     $("pct").innerHTML=`${fmt(pct,2)}<small>%</small>`;
-    $("what").innerHTML=(shopMode()?`${manual?"What you've set":"What you should use"}: ${kind==="bpo"?"cream":"kicker"} by weight of ${p.cat==="paste"?"paste":"resin"}`:`${manual?"Your setting":"Recommended"}: ${kind==="bpo"?"BPO cream":"MEKP"} by weight of ${p.cat==="paste"?"paste":"resin"}`)+(state.manual!=null&&Math.abs(pct-rec)>0.001?"":chip(ratioK));
+    $("what").innerHTML=(shopMode()?`${manual?"What you've set":"What you should use"}: ${kind==="bpo"?"cream":"kicker"} by weight of ${p.cat==="paste"?"paste":"resin"}`:`${manual?"Your setting":"Typical"}: ${kind==="bpo"?"BPO cream":"MEKP"} by weight of ${p.cat==="paste"?"paste":"resin"}`)+(state.manual!=null&&Math.abs(pct-rec)>0.001?"":chip(ratioK));
     const cold=t<minT;
-    const gelL=T("Gel time","Goes off in"),workL=kind==="bpo"?T("Spreading time","Spread it in"):T("Working time","You've got");
+    const gelL=T("Typical gel time","Goes off in"),workL=kind==="bpo"?T("Typical spreading time","Spread it in"):T("Typical working time","You've got");
     const tc=cold?`<div><dt>${gelL}</dt><dd>${T("Unreliable","Not happening")}<small>${T("too cold to cure","too bloody cold")}</small></dd></div><div><dt>${workL}</dt><dd>–</dd></div>`
       :`<div><dt>${gelL}${chip(timeK)}</dt><dd>${dur(gt)}<small>${span(gt)}</small></dd></div><div><dt>${workL}${chip("est")}</dt><dd>${dur(gt*0.75)}<small>${T("about ¾ of gel time","then it's rubbish")}</small></dd></div>`;
     if(kind==="mekp"){
