@@ -142,5 +142,21 @@ ok("MMA offers its own activators only", run({ p: "mma" }).hard.every(h => h.sta
   ok("Fixed-ratio explanation sits behind an info button", !$("ratioInfoBtn").hidden && $("ratioInfo").hidden);
 }
 
+// Uncle Roy's version: locked until the supporter code is entered; Professional stays free
+{
+  const mode = () => d.documentElement.dataset.mode;
+  $("mode-shop").click();
+  ok("Uncle Roy's version is locked by default", $("unlock").hidden === false && mode() === "pro");
+  $("unlockCode").value = "wrong"; $("unlockGo").click();
+  ok("Wrong code is rejected", !$("unlockErr").hidden && mode() === "pro");
+  $("unlockCode").value = "kicker"; $("unlockGo").click();
+  ok("Correct code unlocks Uncle Roy's version", $("unlock").hidden && mode() === "shop" && d.querySelector("h1").textContent.includes("Bloody Kicker"));
+  $("mode-pro").click();
+  ok("Professional stays free and switchable", mode() === "pro");
+  $("mode-shop").click();
+  ok("Unlock is remembered", mode() === "shop" && $("unlock").hidden);
+  $("mode-pro").click();
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

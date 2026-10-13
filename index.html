@@ -156,14 +156,24 @@ select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius
 .ratioCtl button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .ratioCtl.off .recline .mine{display:none}
 .sectionHead{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.03em;text-transform:uppercase;margin:0;color:var(--muted)}
-.modebar{display:inline-grid;grid-template-columns:1fr 1fr;justify-self:start;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--surface);gap:2px}
-.modebar button{font:inherit;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer}
+.modebar{display:inline-grid;grid-template-columns:auto auto;justify-self:start;max-width:100%;border:1px solid var(--line);border-radius:18px;padding:3px;background:var(--surface);gap:2px}
+.modebar button small{display:block;margin-top:2px;font-family:var(--body);font-size:11px;letter-spacing:0;text-transform:none;opacity:.8}
+.modebar button{border-radius:14px!important;font:inherit;font-family:var(--mono);font-size:12px;line-height:1.2;letter-spacing:.06em;text-transform:uppercase;padding:7px 14px;border:0;border-radius:999px;background:transparent;color:var(--muted);cursor:pointer}
 .modebar button[aria-pressed="true"]{background:var(--fg);color:var(--surface)}
 [data-mode="shop"] .modebar button#mode-shop[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .modebar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [data-mode="shop"] header{padding-top:14px;background:repeating-linear-gradient(-45deg,var(--accent) 0 10px,var(--fg) 10px 20px) top/100% 6px no-repeat}
 .beta{display:inline-block;vertical-align:middle;margin-left:6px;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:4px;background:var(--warn-bg);color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn);white-space:nowrap}
 .tdsErr{margin:0;font-size:14px;color:var(--crit);padding:8px 12px;border-left:3px solid var(--crit);background:var(--crit-bg);border-radius:0 6px 6px 0}
+.unlockCard{gap:14px;overflow-y:auto}
+.unlockBody{display:grid;gap:8px;font-size:15px}
+.unlockBody p{margin:0}
+.unlockBody .sample{font-family:var(--display);font-weight:600;font-size:22px;color:var(--accent)}
+a.acceptBtn{text-align:center;text-decoration:none;display:block}
+#unlockCode{font:inherit;font-family:var(--mono);font-size:16px;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg);flex:1 1 140px;min-width:0}
+#unlockCode:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.unlockGo{font:inherit;font-weight:600;padding:10px 16px;border:1px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);cursor:pointer}
+.unlockGo:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .linkbtn{font:inherit;font-size:13px;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;cursor:pointer}
 .linkbtn:focus-visible,.acceptBtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);background:rgba(10,14,16,.72)}
@@ -188,8 +198,8 @@ body.locked{overflow:hidden}
 <body>
 <div class="wrap">
   <div class="modebar" role="group" aria-label="Language">
-    <button type="button" id="mode-pro" aria-pressed="true">Professional</button>
-    <button type="button" id="mode-shop" aria-pressed="false">Shop floor</button>
+    <button type="button" id="mode-pro" aria-pressed="true">Professional<small>Free</small></button>
+    <button type="button" id="mode-shop" aria-pressed="false">Uncle Roy's version<small id="shopSub">for supporters · $1</small></button>
   </div>
   <header>
     <div class="eyebrow" data-shop="Goo · Gunk · The stuff that bites">Resins · Pastes · Hardeners</div>
@@ -313,6 +323,28 @@ body.locked{overflow:hidden}
   <p class="disclaimer"><button type="button" class="linkbtn" id="openTerms">Disclaimer and conditions of use</button></p>
 </div>
 
+<div class="modal" id="unlock" role="dialog" aria-modal="true" aria-labelledby="unlockTitle" hidden>
+  <div class="modalCard unlockCard">
+    <h2 id="unlockTitle">Uncle Roy's version for supporters</h2>
+    <div class="unlockBody">
+      <p>The same calculator, with Uncle Roy doing the talking: shop floor language, dark humour and the odd insult. Same numbers, worse manners.</p>
+      <p class="sample">"Employee of the month my arse."</p>
+      <p>The Professional version stays free. A one-off A$1 unlocks Uncle Roy's version and helps keep the app going.</p>
+    </div>
+    <a class="acceptBtn" id="payLink" href="#" target="_blank" rel="noopener">Support with A$1</a>
+    <p class="modalNote" id="payPending" hidden>Supporter payments open soon.</p>
+    <div class="field">
+      <label class="label" for="unlockCode">Already supported? <span class="hint">enter the code from your payment confirmation</span></label>
+      <div class="row">
+        <input type="text" id="unlockCode" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Unlock code">
+        <button type="button" class="unlockGo" id="unlockGo">Unlock</button>
+      </div>
+      <p class="tdsErr" id="unlockErr" hidden>That code doesn't match. It's shown on the confirmation page after your payment.</p>
+    </div>
+    <button type="button" class="linkbtn" id="unlockClose">Not now</button>
+  </div>
+</div>
+
 <div class="modal" id="terms" role="dialog" aria-modal="true" aria-labelledby="termsTitle" hidden>
   <div class="modalCard">
     <h2 id="termsTitle" data-shop="The boring bit. Read it.">Disclaimer and conditions of use</h2>
@@ -328,8 +360,8 @@ body.locked{overflow:hidden}
       <p>Catalysts such as MEKP are hazardous. They can cause blindness, serious burns and fire. Mixed resin gives off heat as it cures, and a large or over-catalysed batch can overheat, smoke and ignite. Wear the protective equipment the SDS requires, work in adequate ventilation, and follow your workplace's emergency procedures. Safety guidance in this app is general information only and does not replace the SDS or professional advice. In an emergency in Australia, call 000.</p>
       <h3>5. Your responsibility</h3>
       <p>You decide what to mix, how much and when. Check every figure before you use it. You are responsible for your work, for its quality, and for complying with work health and safety laws and your employer's procedures.</p>
-      <h3>6. Shop floor mode</h3>
-      <p>Shop floor mode changes the wording only, not the calculations. Its language is coarse and humorous and is not an instruction to do anything unsafe.</p>
+      <h3>6. Uncle Roy's version</h3>
+      <p>Uncle Roy's version is an optional version for supporters, unlocked by a one-off payment of A$1. It changes the wording only, not the calculations. Its language is coarse and humorous and is not an instruction to do anything unsafe. The unlock is saved on the device and browser where the code was entered. Keep your unlock code so you can enter it again after clearing your browser data or on another device.</p>
       <h3>7. Limits of liability</h3>
       <p>To the extent permitted by law, the developer is not liable for any loss, damage, injury, scrapped work, rework or delay arising from use of, or reliance on, this app. Nothing in these conditions excludes, restricts or modifies any right or remedy you have under the Australian Consumer Law that cannot lawfully be excluded. Where liability can lawfully be limited, it is limited, at the developer's option, to supplying the app again or refunding the price paid.</p>
       <h3>8. Product names</h3>
@@ -668,14 +700,38 @@ function drawChart(p,t,rh,minT,pct){
 
 const staticEls=[...document.querySelectorAll("[data-shop]")];
 staticEls.forEach(el=>el.dataset.pro=el.innerHTML);
+// Uncle Roy's version: one-off A$1 supporter unlock.
+// PAY_URL: the Stripe Payment Link. UNLOCK_CODE: shown on that link's confirmation page.
+const PAY_URL="";
+const UNLOCK_CODE="KICKER";
+const UNLOCK_KEY="lcc-uncle-roy";
+let unlockedMem=false;
+function isUnlocked(){if(unlockedMem)return true;try{return localStorage.getItem(UNLOCK_KEY)==="1"}catch(e){return false}}
+function setUnlocked(){unlockedMem=true;try{localStorage.setItem(UNLOCK_KEY,"1")}catch(e){}}
+function openUnlock(){
+  $("payLink").hidden=!PAY_URL;$("payPending").hidden=!!PAY_URL;if(PAY_URL)$("payLink").href=PAY_URL;
+  $("unlockErr").hidden=true;$("unlockCode").value="";
+  $("unlock").hidden=false;document.body.classList.add("locked");
+}
+function closeUnlock(){$("unlock").hidden=true;document.body.classList.remove("locked")}
+function tryUnlock(){
+  const v=$("unlockCode").value.trim().toUpperCase();
+  if(v&&v===UNLOCK_CODE){setUnlocked();closeUnlock();state.mode="shop";applyMode();buildProducts();buildHardeners();render()}
+  else $("unlockErr").hidden=false;
+}
+$("unlockGo").addEventListener("click",tryUnlock);
+$("unlockCode").addEventListener("keydown",e=>{if(e.key==="Enter")tryUnlock()});
+$("unlockClose").addEventListener("click",closeUnlock);
 function applyMode(){
+  if(state.mode==="shop"&&!isUnlocked())state.mode="pro";
+  $("shopSub").textContent=isUnlocked()?"for supporters · thanks":"for supporters · $1";
   const shop=shopMode();
   document.documentElement.dataset.mode=state.mode;
   staticEls.forEach(el=>el.innerHTML=shop?el.dataset.shop:el.dataset.pro);
   $("mode-pro").setAttribute("aria-pressed",String(!shop));$("mode-shop").setAttribute("aria-pressed",String(shop));
   quipLevel=null;
 }
-for(const m of ["pro","shop"])$("mode-"+m).addEventListener("click",()=>{state.mode=m;applyMode();buildProducts();buildHardeners();render()});
+for(const m of ["pro","shop"])$("mode-"+m).addEventListener("click",()=>{if(m==="shop"&&!isUnlocked()){openUnlock();return}state.mode=m;applyMode();buildProducts();buildHardeners();render()});
 for(const c of ["resin","paste"])$("tab-"+c).addEventListener("click",()=>{
   if(state.cat===c)return;state.cat=c;
   if(P[state.p].cat!==c)state.p=Object.keys(P).find(k=>P[k].cat===c);
