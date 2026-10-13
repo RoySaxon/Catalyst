@@ -128,6 +128,7 @@ select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius
 [data-mode="shop"] .modebar button#mode-shop[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .modebar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [data-mode="shop"] header{padding-top:14px;background:repeating-linear-gradient(-45deg,var(--accent) 0 10px,var(--fg) 10px 20px) top/100% 6px no-repeat}
+.beta{display:inline-block;vertical-align:middle;margin-left:6px;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:4px;background:var(--warn-bg);color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn);white-space:nowrap}
 .quip{margin:0;font-family:var(--display);font-weight:600;font-size:22px;line-height:1.15;color:var(--fg);text-wrap:balance}
 .tdsrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tdsrow label{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
@@ -145,8 +146,8 @@ select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius
     <button type="button" id="mode-shop" aria-pressed="false">Shop floor</button>
   </div>
   <header>
-    <div class="eyebrow" data-shop="Beta · Goo · Gunk · The stuff that bites">Beta · Resins · Pastes · Hardeners</div>
-    <h1 data-shop="How Much Bloody Kicker">Laminator's Catalyst Calculator</h1>
+    <div class="eyebrow" data-shop="Goo · Gunk · The stuff that bites">Resins · Pastes · Hardeners</div>
+    <h1 data-shop='How Much Bloody Kicker <span class="beta">Beta: still being tested</span>'>Laminator's Catalyst Calculator <span class="beta">Beta version</span></h1>
     <p class="sub" data-shop="Pick your poison, tell it how shit the weather is, and it'll tell you how much kicker to chuck in and how long before it goes off in the bucket. Read all of it. Yes, the bottom bit too.">Pick the product and the hardener on the shelf, set the shop conditions and batch, and get the ratio, the amount to measure and how long you have.</p>
   </header>
 
