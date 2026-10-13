@@ -9,7 +9,7 @@ const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8")
 const dom = new JSDOM(html, { runScripts: "dangerously" });
 const w = dom.window, d = w.document, $ = id => d.getElementById(id);
 const fire = (el, t) => el.dispatchEvent(new w.Event(t, { bubbles: true }));
-const PASTES = ["bog", "easy", "fibre", "gpaste", "pbond", "vbond", "ua", "mma", "fair"];
+const PASTES = ["bog", "easy", "fibre", "gpaste", "pbond", "vbond", "ua", "mma", "fair", "fairo"];
 
 function run(c) {
   $("tab-" + (PASTES.includes(c.p) ? "paste" : "resin")).click();
@@ -82,6 +82,26 @@ ok("TDS figure does not stretch gelcoat maximum", run({ p: "gelc", h: "n925h", t
 ok("Fillers offer BPO cream only", JSON.stringify(run({ p: "easy" }).hard) === '["bpo"]');
 ok("Epoxy offers no peroxides", !run({ p: "epoxy" }).hard.some(h => ["kp9", "m50", "bpo"].includes(h)));
 ok("MMA offers its own activators only", run({ p: "mma" }).hard.every(h => h.startsWith("mma")));
+
+// Third review: humidity, data sheet validation, epoxy compatibility, per-system custom values, overlaps
+{
+  const dry = run({ p: "ortho", h: "m50", t: 25, rh: 50 }).ratio, wet = run({ p: "ortho", h: "m50", t: 25, rh: 95 }).ratio;
+  ok("Humidity does not change the catalyst ratio", dry === wet, `${dry} vs ${wet}`);
+  const base = run({ p: "ortho", h: "m50", t: 25 }).ratio;
+  const noTemp = run({ p: "ortho", h: "m50", t: 25, tdsPct: 2 });
+  ok("Data sheet % without temperature is ignored", noTemp.ratio === base && !$("tdsErr").hidden, noTemp.ratio);
+  const silly = run({ p: "ortho", h: "m50", t: 25, tdsPct: 0.2, tdsT: 25 });
+  ok("Implausible data sheet % is rejected", silly.ratio === base && !$("tdsErr").hidden, silly.ratio);
+  ok("West epoxy offers West hardeners only", run({ p: "epoxy" }).hard.every(h => h.startsWith("w")));
+  ok("Other epoxy offers data sheet entry only", JSON.stringify(run({ p: "epoxyo" }).hard) === '["epc"]');
+  run({ p: "epoxyo" }); $("ratio").value = 42; fire($("ratio"), "input");
+  run({ p: "fairo" });
+  ok("Custom ratio does not carry to another system", $("ratio").value === "", `field shows "${$("ratio").value}"`);
+  run({ p: "epoxyo" });
+  ok("Custom ratio is remembered for its own system", $("ratio").value === "42", `field shows "${$("ratio").value}"`);
+  ok("Cold plus humid reports the critical status", run({ p: "ortho", h: "m50", t: 10, rh: 90 }).status_cls.includes("crit"));
+  ok("Above 35 °C is flagged as beyond the data", run({ p: "ortho", h: "m50", t: 38 }).status_cls.match(/warn|crit/));
+}
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
