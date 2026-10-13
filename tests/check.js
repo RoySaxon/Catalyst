@@ -113,7 +113,10 @@ ok("MMA offers its own activators only", run({ p: "mma" }).hard.every(h => h.sta
   const iso = $("prod-iso"); iso.checked = true; fire(iso, "change");
   ok("Choosing a product folds the list", $("products").hidden === true && $("prodBtn").textContent.includes("Iso laminating resin"));
   $("hardBtn").click(); const lpt = $("hard-lpt"); lpt.checked = true; fire(lpt, "change");
-  ok("Hardener card shows the chosen grade and its details", $("hardBtn").textContent.includes("Butanox LPT-IN") && $("hardBtn").textContent.includes("Extra slow"));
+  ok("Collapsed hardener shows the name only", $("hardBtn").textContent.trim().replace("▾","").trim() === "Butanox LPT-IN", $("hardBtn").textContent);
+  $("hardBtn").click();
+  ok("Open hardener list still shows speed and data tags", $("hardeners").textContent.includes("Extra slow") && $("hardeners").textContent.includes("Estimated speed"));
+  $("hardBtn").click();
   run({ p: "bog" });
   ok("Single-hardener products do not open a list", ($("hardBtn").click(), $("hardeners").hidden === true));
 }
@@ -124,6 +127,19 @@ ok("MMA offers its own activators only", run({ p: "mma" }).hard.every(h => h.sta
   ok("Headline shows working time, about three quarters of gel time", Math.abs(r.work - r.gel * 0.75) < 0.2 && r.heroNum.includes("min"), `${r.heroNum}, gel ${r.gel}`);
   ok("Headline says unreliable when too cold", run({ p: "gelc", h: "n925h", t: 12 }).heroNum === "Unreliable");
   ok("Epoxy headline is cup pot life", run({ p: "epoxy", h: "w205", t: 22, b: 83 }).heroNum === "11 min");
+}
+
+// Explainers behind info buttons
+{
+  run({ p: "ortho", h: "m50", t: 25 });
+  ok("Humidity explainer starts hidden", $("rhInfo").hidden === true);
+  d.querySelector('[data-for="rhInfo"]').click();
+  ok("Info button reveals the humidity explainer", $("rhInfo").hidden === false);
+  ok("Background notes start folded", $("infoNotes").hidden === true && $("infoNotes").children.length > 0);
+  const cold = run({ p: "gelc", h: "n925h", t: 12 });
+  ok("Safety warnings stay visible, not folded", !$("notes").hidden && $("notes").textContent.includes("16 °C"));
+  run({ p: "epoxy", h: "w205" });
+  ok("Fixed-ratio explanation sits behind an info button", !$("ratioInfoBtn").hidden && $("ratioInfo").hidden);
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);

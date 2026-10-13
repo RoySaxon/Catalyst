@@ -84,6 +84,21 @@ h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,7vw,44px);lin
 .q.data{background:var(--good-bg);color:var(--good)}
 .q.est{color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn)}
 .q.user{background:var(--slow-bg);color:var(--slow)}
+.lbl{display:inline-flex;align-items:center;gap:8px}
+.info{flex:none;display:inline-grid;place-items:center;width:22px;height:22px;padding:0;border-radius:50%;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font:600 13px/1 var(--body);font-style:italic;cursor:pointer}
+.info[aria-expanded="true"]{background:var(--accent);color:var(--accent-ink)}
+.info:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.infoText{font-size:14px;color:var(--muted);margin:0;padding:8px 12px;border-left:3px solid var(--accent);display:grid;gap:6px}
+.infoText p{margin:0}
+.headRow{display:flex;align-items:center;gap:10px}
+.whatRow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chartHead{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;margin-bottom:6px}
+.infoRow{width:auto;height:auto;border-radius:6px;border:0;font:inherit;font-size:14px;font-weight:600;font-style:normal;color:var(--accent);display:inline-flex;gap:8px;align-items:center;padding:2px 0}
+.infoRow .i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--accent);font-style:italic;font-size:13px}
+.infoRow[aria-expanded="true"]{background:transparent;color:var(--accent)}
+.infoRow[aria-expanded="true"] .i{background:var(--accent);color:var(--accent-ink)}
+.moreNotes{display:grid;gap:8px}
+.pickName{flex:1;min-width:0;font-weight:600;font-size:16px;line-height:1.25}
 .picker{display:grid;gap:8px}
 .pickBtn{font:inherit;color:inherit;text-align:left;display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:1px solid var(--accent);border-radius:8px;background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent);cursor:pointer}
 .pickBtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -194,9 +209,12 @@ body.locked{overflow:hidden}
       </div>
 
       <div class="field">
-        <div class="label" data-shop='Kicker <span class="hint">only the ones that actually work, genius</span>'>Hardener <span class="hint">only grades that cure this product</span></div>
+        <div class="label"><span class="lbl"><span data-shop="Kicker">Hardener</span> <button type="button" class="info" data-for="hardInfo" aria-expanded="false" aria-label="More information">i</button></span></div>
         <div class="picker"><button type="button" class="pickBtn" id="hardBtn" aria-expanded="false" aria-controls="hardeners"></button><div class="cards" id="hardeners" role="radiogroup" aria-label="Hardener" hidden></div></div>
-        <p class="locked" id="lockMsg" hidden></p>
+        <div class="infoText" id="hardInfo" hidden>
+          <p data-shop="Only the ones that actually work are listed, genius.">Only grades that cure this product are listed.</p>
+          <p id="lockMsg" hidden></p>
+        </div>
       </div>
 
       <div class="field">
@@ -206,11 +224,11 @@ body.locked{overflow:hidden}
       </div>
 
       <div class="field">
-        <label class="label" for="rh"><span data-shop="How sweaty is it">Relative humidity</span> <span class="readout" id="rhOut">65 %</span></label>
+        <div class="label"><span class="lbl"><label for="rh"><span data-shop="How sweaty is it">Relative humidity</span></label> <button type="button" class="info" data-for="rhInfo" aria-expanded="false" aria-label="More information">i</button></span> <span class="readout" id="rhOut">65 %</span></div>
         <input type="range" id="rh" min="20" max="100" step="1" value="65">
         <div class="scale"><span>20%</span><span>50%</span><span>75%</span><span>100%</span></div>
         <p class="help" id="dew"></p>
-        <p class="help" data-shop="Humidity barely touches how fast it goes off. What it wrecks is the surface: sticky gelcoat, blush on epoxy, water on your mould. So it gets you warnings, not extra kicker.">Humidity has little effect on gel time or the catalyst ratio, so neither changes with it. It mainly slows the surface cure and causes tackiness, epoxy blush and condensation, which is what the warnings cover.</p>
+        <div class="infoText" id="rhInfo" hidden><p data-shop="Humidity barely touches how fast it goes off. What it wrecks is the surface: sticky gelcoat, blush on epoxy, water on your mould. So it gets you warnings, not extra kicker.">Humidity has little effect on gel time or the catalyst ratio, so neither changes with it. It mainly slows the surface cure and causes tackiness, epoxy blush and condensation, which is what the warnings cover.</p><p data-shop="Dew point: anything colder than that sweats like an apprentice at a toolbox talk.">The dew point is the temperature at which moisture condenses. Moulds and core colder than it will collect water.</p></div>
       </div>
 
       <div class="field">
@@ -231,17 +249,14 @@ body.locked{overflow:hidden}
       </div>
 
       <div class="field" id="baseField">
-        <div class="label"><span data-shop="What your data sheet says">Your data sheet (TDS)</span> <span class="hint" data-shop="if you can find it">optional</span></div>
+        <div class="label"><span class="lbl"><span data-shop="What your data sheet says">Your data sheet (TDS)</span> <button type="button" class="info" data-for="tdsInfo" aria-expanded="false" aria-label="What is this?">i</button></span> <span class="hint" data-shop="if you can find it">optional</span></div>
         <div class="tdsrow">
           <label for="tdsPct"><span data-shop="Kicker">Catalyst</span><input type="number" id="tdsPct" inputmode="decimal" min="0" step="0.05" placeholder="%"></label>
           <label for="tdsT"><span data-shop="At">At temperature</span><input type="number" id="tdsT" inputmode="decimal" step="1" placeholder="°C"></label>
           <label for="tdsGel"><span data-shop="Goes off in">Gel time</span><input type="number" id="tdsGel" inputmode="decimal" min="0" step="any" placeholder="min"></label>
         </div>
         <p class="tdsErr" id="tdsErr" hidden></p>
-        <details class="explain">
-          <summary data-shop="What the hell is this?">What is this?</summary>
-          <div data-shop="<p>Every resin is a bit different. The data sheet that comes with it, the bit of paper nobody reads, says how much kicker to use at a certain temperature, and usually how fast it goes off.</p><p>Copy those numbers in here and the app stops guessing and works off your resin. Sheet says <q>1.5% at 20 °C, gel time 25 minutes</q>? Type 1.5, 20 and 25. Done.</p><p>Only got the percentage? Fill in the first two and leave the gel time empty. No sheet at all? Leave the lot blank and the app uses typical numbers, and admits they are guesses.</p><p>Each product remembers its own numbers, so your gelcoat sheet won't mess up your laminating resin.</p>"><p>Every resin is a little different. The technical data sheet (TDS) that comes with it tells you how much catalyst to use at a certain temperature, and usually how long it takes to gel.</p><p>Copy those numbers in here and the app works from your resin instead of a typical one. If the sheet says <q>1.5% at 20 °C, gel time 25 minutes</q>, type 1.5, 20 and 25.</p><p>If the sheet only gives a percentage, fill in the first two boxes and leave gel time empty. If you don't have the sheet, leave everything blank: the app uses typical values and marks them as estimates.</p><p>Each product keeps its own numbers, so a gelcoat sheet won't change your laminating resin.</p></div>
-        </details>
+        <div class="infoText" id="tdsInfo" hidden data-shop="<p>Every resin is a bit different. The data sheet that comes with it, the bit of paper nobody reads, says how much kicker to use at a certain temperature, and usually how fast it goes off.</p><p>Copy those numbers in here and the app stops guessing and works off your resin. Sheet says <q>1.5% at 20 °C, gel time 25 minutes</q>? Type 1.5, 20 and 25. Done.</p><p>Only got the percentage? Fill in the first two and leave the gel time empty. No sheet at all? Leave the lot blank and the app uses typical numbers, and admits they are guesses.</p><p>Each product remembers its own numbers, so your gelcoat sheet won't mess up your laminating resin.</p>"><p>Every resin is a little different. The technical data sheet (TDS) that comes with it tells you how much catalyst to use at a certain temperature, and usually how long it takes to gel.</p><p>Copy those numbers in here and the app works from your resin instead of a typical one. If the sheet says <q>1.5% at 20 °C, gel time 25 minutes</q>, type 1.5, 20 and 25.</p><p>If the sheet only gives a percentage, fill in the first two boxes and leave gel time empty. If you don't have the sheet, leave everything blank: the app uses typical values and marks them as estimates.</p><p>Each product keeps its own numbers, so a gelcoat sheet won't change your laminating resin.</p></div>
       </div>
 
       <div class="field" id="customField" hidden>
@@ -257,7 +272,8 @@ body.locked{overflow:hidden}
     </section>
 
     <section class="panel result" id="results" aria-live="polite">
-      <h2 class="sectionHead" data-shop="The damage">Results</h2>
+      <div class="headRow"><h2 class="sectionHead" data-shop="The damage">Results</h2><button type="button" class="info" data-for="legendInfo" aria-expanded="false" aria-label="What the labels mean">i</button></div>
+      <div class="infoText" id="legendInfo" hidden><p data-shop='<span class="q data" style="margin:0 4px 0 0">Checked</span> came off a real data sheet. <span class="q est" style="margin:0 4px 0 0">Educated guess</span> is exactly that. <span class="q user" style="margin:0 4px 0 0">Your problem</span> is whatever you typed in, so if it is wrong, that is on you.'><span class="q data" style="margin:0 4px 0 0">TDS-based</span> starts from a published data sheet figure, scaled to your conditions. <span class="q est" style="margin:0 4px 0 0">Estimate</span> is a typical value with no published figure behind it. <span class="q user" style="margin:0 4px 0 0">Your figure</span> comes from what you entered.</p></div>
       <p class="quip" id="quip" hidden></p>
       <span id="status" class="status good">Good to lay up</span>
       <p class="picked" id="picked"></p>
@@ -268,7 +284,7 @@ body.locked{overflow:hidden}
       </div>
       <div class="big">
         <div class="num" id="pct">1.25<small>%</small></div>
-        <div class="what" id="what">MEKP by weight of resin</div>
+        <div class="whatRow"><div class="what" id="what">MEKP by weight of resin</div><button type="button" class="info" id="ratioInfoBtn" hidden data-for="ratioInfo" aria-expanded="false" aria-label="Why this ratio is fixed">i</button></div>
       </div>
       <div class="ratioCtl" id="ratioCtl">
         <label class="label" for="pctR"><span data-shop="Kicker">Catalyst ratio</span> <span class="readout" id="pctOut"></span></label>
@@ -276,18 +292,24 @@ body.locked{overflow:hidden}
         <div class="scale" id="pctScale"></div>
         <div class="recline"><span id="pctRec"></span><button type="button" id="pctReset" data-shop="Put it back how it was">Back to typical</button></div>
       </div>
-      <p class="locked" id="ratioFixed" hidden></p>
+      <div class="infoText" id="ratioInfo" hidden><p id="ratioFixed"></p></div>
       <dl class="amounts" id="amounts"></dl>
-      <p class="help" data-shop='<span class="q data" style="margin:0 4px 0 0">Checked</span> came off a real data sheet. <span class="q est" style="margin:0 4px 0 0">Educated guess</span> is exactly that. <span class="q user" style="margin:0 4px 0 0">Your problem</span> is whatever you typed in, so if it is wrong, that is on you.'><span class="q data" style="margin:0 4px 0 0">TDS-based</span> starts from a published data sheet figure, scaled to your conditions. <span class="q est" style="margin:0 4px 0 0">Estimate</span> is a typical value with no published figure behind it. <span class="q user" style="margin:0 4px 0 0">Your figure</span> comes from what you entered.</p>
+
       <figure class="chart" id="chartWrap">
+        <div class="chartHead"><span data-shop="Kicker vs temperature">Ratio across temperatures</span> <button type="button" class="info" data-for="chartInfo" aria-expanded="false" aria-label="How to read the chart">i</button></div>
         <svg id="chart" viewBox="0 0 340 170" role="img" aria-label="Catalyst ratio against temperature"></svg>
-        <figcaption data-shop="The line is what you should be doing. The dot is what you are actually doing. The red bit is too cold, so go home.">The line is the typical ratio across temperatures. The dot is your ratio at your shop temperature; the shaded strip is too cold to cure.</figcaption>
+        <figcaption class="infoText" id="chartInfo" hidden data-shop="The line is what you should be doing. The dot is what you are actually doing. The red bit is too cold, so go home.">The line is the typical ratio across temperatures. The dot is your ratio at your shop temperature; the shaded strip is too cold to cure.</figcaption>
       </figure>
       <ul class="notes" id="notes"></ul>
+      <div class="moreNotes" id="moreNotesWrap">
+        <button type="button" class="info infoRow" data-for="infoNotes" aria-expanded="false"><span class="i">i</span><span id="moreNotesLbl">Notes on these figures</span></button>
+        <ul class="notes infoText" id="infoNotes" hidden></ul>
+      </div>
     </section>
   </div>
 
-  <p class="disclaimer" data-shop="This is a calculator, not your mum. The TDS outranks it, the supervisor outranks the TDS, and Claire at HR outranks everyone. Cup test anything new before you glass a hull with it, and wear the bloody gloves. MEKP in the eye means hospital, not a funny story.">Ratios are typical workshop values for promoted resins. Gel times come from a model fitted to published data sheet figures; figures marked Estimate have no published figure behind them yet. The supplier's TDS always takes priority, and the hardener a product's TDS names is the one to use. Run a cup test on any new batch before committing a part.</p>
+  <p class="disclaimer"><span class="lbl"><span data-shop="About these figures">About these figures</span> <button type="button" class="info" data-for="aboutInfo" aria-expanded="false" aria-label="More information">i</button></span></p>
+  <p class="disclaimer infoText" id="aboutInfo" hidden data-shop="This is a calculator, not your mum. The TDS outranks it, the supervisor outranks the TDS, and Claire at HR outranks everyone. Cup test anything new before you glass a hull with it, and wear the bloody gloves. MEKP in the eye means hospital, not a funny story.">Ratios are typical workshop values for promoted resins. Gel times come from a model fitted to published data sheet figures; figures marked Estimate have no published figure behind them yet. The supplier's TDS always takes priority, and the hardener a product's TDS names is the one to use. Run a cup test on any new batch before committing a part.</p>
   <p class="disclaimer"><button type="button" class="linkbtn" id="openTerms">Disclaimer and conditions of use</button></p>
 </div>
 
@@ -482,13 +504,14 @@ function syncPicker(listId,btnId){
   const list=$(listId),btn=$(btnId),inp=list.querySelector("input:checked"),n=list.querySelectorAll("input").length;
   if(!inp){btn.innerHTML="";return}
   const c=inp.closest("label").cloneNode(true);c.querySelector("input").remove();
-  const more=n>1?`<span class="more">${T(`${n} options`,`${n} to pick from`)}</span>`:"";
-  btn.innerHTML=`<div class="pickBody">${c.innerHTML}${more}</div>${n>1?'<span class="chev" aria-hidden="true">▾</span>':""}`;
+  const name=c.querySelector("span:not(.tag)").textContent;
+  btn.innerHTML=`<span class="pickName">${name}</span>${n>1?'<span class="chev" aria-hidden="true">▾</span>':""}`;
   btn.classList.toggle("single",n<2);
   btn.setAttribute("aria-label",T("Change selection","Change it"));
 }
 function setOpen(listId,btnId,open){$(listId).hidden=!open;$(btnId).setAttribute("aria-expanded",String(open))}
 for(const [l,b] of [["products","prodBtn"],["hardeners","hardBtn"]])$(b).addEventListener("click",()=>{if($(l).querySelectorAll("input").length<2)return;setOpen(l,b,$(l).hidden)});
+document.addEventListener("click",e=>{const b=e.target.closest(".info");if(!b)return;const t=$(b.dataset.for);if(!t)return;const open=t.hidden;t.hidden=!open;b.setAttribute("aria-expanded",String(open))});
 function buildProducts(){
   for(const c of ["resin","paste"])$("tab-"+c).setAttribute("aria-selected",String(state.cat===c));
   $("products").innerHTML=Object.entries(P).filter(([,p])=>p.cat===state.cat).map(([k,p])=>
@@ -511,7 +534,7 @@ function render(){
   const kind=p.kind,custom=!!hd.custom,peroxide=kind==="mekp"||kind==="bpo";
   $("tempOut").textContent=t+" °C";$("rhOut").textContent=rh+" %";
   const dp=dewPoint(t,rh);
-  $("dew").textContent=T(`Dew point ${fmt(dp,0)} °C. Moulds and core colder than this will sweat.`,`Dew point ${fmt(dp,0)} °C. Anything colder than that sweats like an apprentice at a toolbox talk.`);
+  $("dew").textContent=T(`Dew point ${fmt(dp,0)} °C`,`Dew point ${fmt(dp,0)} °C`);
   $("picked").innerHTML=T(`<b>${p.name}</b> with <b>${hd.name}</b>`,`Running <b>${p.name}</b> on <b>${hd.name}</b>.`);
   $("baseField").hidden=!peroxide||p.min===p.max;$("chartWrap").hidden=!peroxide;
   $("customField").hidden=!custom;$("ratioWrap").hidden=kind==="mma";
@@ -548,7 +571,7 @@ function render(){
   const fixedMsg=kind==="epoxy"?T("Fixed ratio. Epoxy cures by matching resin and hardener molecule for molecule, so more or less hardener weakens it. Timing is adjusted by choosing a faster or slower hardener.","Fixed ratio. Epoxy isn't polyester; you can't just chuck more in. More hardener means a soft, crap cure. Want it faster? Change the hardener.")
     :kind==="mma"?T("Fixed 10:1 by volume through the mixer nozzle. The ratio isn't adjustable.","10:1 through the nozzle. Don't touch it. Seriously.")
     :p.min===p.max?T(`Fixed at ${fmt(p.min,0)}% by the manufacturer. Adjusting it compromises the bond.`,`${fmt(p.min,0)}%. Not a suggestion. Fiddle with it and the bond's buggered.`):null;
-  $("ratioCtl").hidden=!!fixedMsg;$("ratioFixed").hidden=!fixedMsg;if(fixedMsg)$("ratioFixed").textContent=fixedMsg;
+  $("ratioCtl").hidden=!!fixedMsg;$("ratioInfoBtn").hidden=!fixedMsg;if(fixedMsg)$("ratioFixed").textContent=fixedMsg;else{$("ratioInfo").hidden=true;$("ratioInfoBtn").setAttribute("aria-expanded","false")}
 
   if(custom&&(!(parseFloat(custOf().epl)>0)||(kind==="epoxy"&&!(parseFloat(custOf().ratio)>0)))){bump("warn",T("Data sheet figures needed","Need the sheet numbers"));notes.push(["warn",T("Enter the ratio and pot life from this system's data sheet. Until then the figures shown use placeholder values.","Type in the numbers off the sheet. Till then these are made up.")])}
   let html="";const hero={label:"",num:"",sub:"",gel:null,work:null};
@@ -584,7 +607,7 @@ function render(){
     $("pctScale").innerHTML=[0,1,2,3].map(i=>`<span>${fmt(sl[0]+(sl[1]-sl[0])*i/3,1).replace(/\.0$/,"")}%</span>`).join("");
     $("pctOut").textContent=fmt(pct,2)+" %";
     const manual=state.manual!=null&&Math.abs(pct-rec)>0.001;
-    $("pctRec").textContent=manual?T(`Typical for these conditions: ${fmt(rec,2)}%`,`Should be ${fmt(rec,2)}% in this weather`):T(`Set to the typical ratio for these conditions${ratioK==="est"?" (a workshop value, not from a TDS)":""}`,`Set to what it should be${ratioK==="est"?" (workshop folklore, not off a TDS)":""}`);
+    $("pctRec").textContent=manual?T(`Typical for these conditions: ${fmt(rec,2)}%`,`Should be ${fmt(rec,2)}% in this weather`):T(`Set to the typical ratio for these conditions`,`Set to what it should be`);
     $("pctReset").hidden=!manual;
     const [lo,hi]=limitsOf(p);
     if(pct<lo-0.001){bump("crit",T("Below typical ratio range","Gonna stay sticky"));notes.push(["crit",T(`${fmt(pct,2)}% is below the typical minimum of ${fmt(lo,2)}% for ${p.name.toLowerCase()}. Below this, it typically gels but doesn't reach full cure, leaving it soft, tacky and weak, sometimes permanently.`,`${fmt(pct,2)}% when the minimum's ${fmt(lo,2)}%. It'll gel, it'll look fine, and it'll stay soft and sticky forever. Don't fuck this up.`)])}
@@ -618,7 +641,10 @@ function render(){
   $("amounts").innerHTML=html;
   $("heroLabel").innerHTML=hero.label;$("heroNum").textContent=hero.num;$("heroSub").innerHTML=hero.sub;
   const he=$("hero");he.dataset.gel=hero.gel??"";he.dataset.work=hero.work??"";
-  $("notes").innerHTML=notes.map(([c,n])=>`<li class="${c}">${n}</li>`).join("");
+  const urgent=notes.filter(([c])=>c),bg=notes.filter(([c])=>!c);
+  $("notes").innerHTML=urgent.map(([c,n])=>`<li class="${c}">${n}</li>`).join("");$("notes").hidden=!urgent.length;
+  $("infoNotes").innerHTML=bg.map(([c,n])=>`<li>${n}</li>`).join("");$("moreNotesWrap").hidden=!bg.length;
+  $("moreNotesLbl").textContent=T(`Notes on these figures (${bg.length})`,`The fine print (${bg.length})`);
   const s=$("status");s.className="status "+level;s.textContent=label;
   const qp=$("quip");qp.hidden=!shopMode();
   if(shopMode()){if(quipLevel!==level){const a=QUIPS[level];quipText=a[Math.floor(Math.random()*a.length)];quipLevel=level}qp.textContent=quipText}
