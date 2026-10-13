@@ -103,5 +103,19 @@ ok("MMA offers its own activators only", run({ p: "mma" }).hard.every(h => h.sta
   ok("Above 35 °C is flagged as beyond the data", run({ p: "ortho", h: "m50", t: 38 }).status_cls.match(/warn|crit/));
 }
 
+// Drop-down pickers
+{
+  run({ p: "ortho", h: "m50" });
+  ok("Product list starts folded", $("products").hidden === true);
+  $("prodBtn").click();
+  ok("Tapping the product card opens the list", $("products").hidden === false);
+  const iso = $("prod-iso"); iso.checked = true; fire(iso, "change");
+  ok("Choosing a product folds the list", $("products").hidden === true && $("prodBtn").textContent.includes("Iso laminating resin"));
+  $("hardBtn").click(); const lpt = $("hard-lpt"); lpt.checked = true; fire(lpt, "change");
+  ok("Hardener card shows the chosen grade and its details", $("hardBtn").textContent.includes("Butanox LPT-IN") && $("hardBtn").textContent.includes("Extra slow"));
+  run({ p: "bog" });
+  ok("Single-hardener products do not open a list", ($("hardBtn").click(), $("hardeners").hidden === true));
+}
+
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);
