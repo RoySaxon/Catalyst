@@ -129,6 +129,17 @@ select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius
 .modebar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 [data-mode="shop"] header{padding-top:14px;background:repeating-linear-gradient(-45deg,var(--accent) 0 10px,var(--fg) 10px 20px) top/100% 6px no-repeat}
 .beta{display:inline-block;vertical-align:middle;margin-left:6px;font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:4px;background:var(--warn-bg);color:var(--warn);box-shadow:inset 0 0 0 1px var(--warn);white-space:nowrap}
+.linkbtn{font:inherit;font-size:13px;padding:0;border:0;background:none;color:var(--accent);text-decoration:underline;cursor:pointer}
+.linkbtn:focus-visible,.acceptBtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px calc(env(safe-area-inset-bottom,0px) + 16px);background:rgba(10,14,16,.72)}
+.modalCard{background:var(--surface);color:var(--fg);border-radius:12px;border:1px solid var(--line);width:100%;max-width:640px;max-height:100%;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:10px;padding:18px}
+.modalCard h2{font-family:var(--display);font-weight:700;font-size:26px;line-height:1.05;margin:0;text-wrap:balance}
+.modalNote{margin:0;color:var(--muted);font-size:14px}
+.termsBody{overflow-y:auto;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:4px 2px 12px;font-size:14.5px}
+.termsBody h3{font-size:15px;margin:14px 0 4px}
+.termsBody p{margin:0;max-width:65ch}
+.acceptBtn{font:inherit;font-weight:600;font-size:16px;padding:12px 16px;border:0;border-radius:8px;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+body.locked{overflow:hidden}
 .quip{margin:0;font-family:var(--display);font-weight:600;font-size:22px;line-height:1.15;color:var(--fg);text-wrap:balance}
 .tdsrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .tdsrow label{display:grid;gap:4px;font-size:13px;color:var(--muted);min-width:0}
@@ -246,6 +257,33 @@ select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius
   </div>
 
   <p class="disclaimer" data-shop="This is a calculator, not your mum. The TDS outranks it, the supervisor outranks the TDS, and Claire at HR outranks everyone. Cup test anything new before you glass a hull with it, and wear the bloody gloves. MEKP in the eye means hospital, not a funny story.">Ratios are typical workshop values for promoted resins. Gel times come from a model fitted to published data sheet figures; products and hardener grades marked as typical have no published figure behind them yet. The supplier's TDS always takes priority, and the hardener a product's TDS names is the one to use. Run a cup test on any new batch before committing a part.</p>
+  <p class="disclaimer"><button type="button" class="linkbtn" id="openTerms">Disclaimer and conditions of use</button></p>
+</div>
+
+<div class="modal" id="terms" role="dialog" aria-modal="true" aria-labelledby="termsTitle" hidden>
+  <div class="modalCard">
+    <h2 id="termsTitle" data-shop="The boring bit. Read it.">Disclaimer and conditions of use</h2>
+    <p class="modalNote" data-shop="This part stays in plain English on purpose. Lawyers don't do jokes.">Please read this before using the calculator.</p>
+    <div class="termsBody">
+      <h3>1. What this app is</h3>
+      <p>Laminator's Catalyst Calculator is an estimating aid for people trained to work with composite materials. It is in beta and still being tested. It does not replace the manufacturer's technical data sheet (TDS) or safety data sheet (SDS), your training, your workplace's procedures or your supervisor's instructions.</p>
+      <h3>2. The figures are estimates</h3>
+      <p>Catalyst ratios, amounts, gel times, working times, pot lives and conversions are calculated from typical workshop values, from published data for specific named products, and from a mathematical model. Figures marked "Estimate" have no published figure behind them. Real results vary with the product and its batch, age and storage, the promoter level, the catalyst grade, the amount mixed, the shape of the part, the temperature of the materials and the mould, humidity, and how accurately things are measured. Results can differ from those shown by a third or more.</p>
+      <h3>3. The manufacturer comes first</h3>
+      <p>Where this app and the manufacturer's TDS, SDS or instructions differ, follow the manufacturer. Use only the catalyst or hardener the manufacturer specifies for the product. Test a small batch before committing a part, especially with a new batch of resin or catalyst.</p>
+      <h3>4. Safety</h3>
+      <p>Catalysts such as MEKP are hazardous. They can cause blindness, serious burns and fire. Mixed resin gives off heat as it cures, and a large or over-catalysed batch can overheat, smoke and ignite. Wear the protective equipment the SDS requires, work in adequate ventilation, and follow your workplace's emergency procedures. Safety guidance in this app is general information only and does not replace the SDS or professional advice. In an emergency in Australia, call 000.</p>
+      <h3>5. Your responsibility</h3>
+      <p>You decide what to mix, how much and when. Check every figure before you use it. You are responsible for your work, for its quality, and for complying with work health and safety laws and your employer's procedures.</p>
+      <h3>6. Shop floor mode</h3>
+      <p>Shop floor mode changes the wording only, not the calculations. Its language is coarse and humorous and is not an instruction to do anything unsafe.</p>
+      <h3>7. Limits of liability</h3>
+      <p>To the extent permitted by law, the developer is not liable for any loss, damage, injury, scrapped work, rework or delay arising from use of, or reliance on, this app. Nothing in these conditions excludes, restricts or modifies any right or remedy you have under the Australian Consumer Law that cannot lawfully be excluded. Where liability can lawfully be limited, it is limited, at the developer's option, to supplying the app again or refunding the price paid.</p>
+      <h3>8. Product names</h3>
+      <p>Product and brand names in this app belong to their owners and are used only to identify those products. Their use does not mean the owners endorse or are connected with this app.</p>
+    </div>
+    <button type="button" class="acceptBtn" id="acceptTerms" data-shop="Got it. I read it. Mostly.">I understand and accept</button>
+  </div>
 </div>
 
 <script>
@@ -554,7 +592,15 @@ state.cat=P[state.p].cat;
 $("temp").value=state.t;$("rh").value=state.rh;$("unit").value=state.unit;
 for(const k of ["batch","ratio","epl"])$(k).value=state[k];
 loadTds();
+
+const ACK="lcc-terms-v1";
+function termsAccepted(){try{return localStorage.getItem(ACK)==="1"}catch(e){return false}}
+function openTerms(){$("terms").hidden=false;document.body.classList.add("locked");$("acceptTerms").focus()}
+function closeTerms(){$("terms").hidden=true;document.body.classList.remove("locked")}
+$("openTerms").addEventListener("click",openTerms);
+$("acceptTerms").addEventListener("click",()=>{try{localStorage.setItem(ACK,"1")}catch(e){}closeTerms()});
 applyMode();buildProducts();buildHardeners();render();
+if(!termsAccepted())openTerms();
 </script>
 <script>
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}

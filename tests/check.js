@@ -30,6 +30,11 @@ const grams = s => parseFloat(s.replace(/,/g, ""));
 
 let pass = 0, fail = 0;
 const ok = (name, cond, detail) => { cond ? pass++ : fail++; console.log(`${cond ? "PASS" : "FAIL"}  ${name}${detail ? "  (" + detail + ")" : ""}`); };
+
+// Disclaimer shows on first open and closes on acceptance
+ok("Disclaimer shown on first open", $("terms").hidden === false);
+$("acceptTerms").click();
+ok("Disclaimer closes when accepted", $("terms").hidden === true);
 const within = (name, got, lo, hi) => ok(name, got >= lo && got <= hi, `got ${got}, accept ${lo} to ${hi}`);
 
 // Published reference figures. Tolerance: 20% either side, the spread seen between brands.
