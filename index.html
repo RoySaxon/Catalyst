@@ -113,8 +113,13 @@ select{font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius
 .status.crit{color:var(--crit);background:var(--crit-bg)}
 .picked{font-size:14px;color:var(--muted);margin:-8px 0 0}
 .picked b{color:var(--fg);font-weight:600}
+.hero{display:grid;gap:4px;padding:14px 16px;border-radius:10px;background:var(--bg);border:1px solid var(--line)}
+.heroLabel{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.heroNum{font-family:var(--display);font-weight:700;font-size:clamp(64px,19vw,104px);line-height:.9;font-variant-numeric:tabular-nums;color:var(--accent)}
+.heroSub{font-size:15px;color:var(--fg)}
+.heroSub small{color:var(--muted);font-size:13px}
 .big{display:grid;gap:2px}
-.big .num{font-family:var(--display);font-weight:700;font-size:clamp(64px,18vw,96px);line-height:.9;font-variant-numeric:tabular-nums;color:var(--accent)}
+.big .num{font-family:var(--display);font-weight:700;font-size:clamp(40px,11vw,56px);line-height:.9;font-variant-numeric:tabular-nums;color:var(--accent)}
 .big .num small{font-size:.45em;margin-left:2px}
 .big .what{color:var(--muted)}
 .amounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:0}
@@ -256,6 +261,11 @@ body.locked{overflow:hidden}
       <p class="quip" id="quip" hidden></p>
       <span id="status" class="status good">Good to lay up</span>
       <p class="picked" id="picked"></p>
+      <div class="hero" id="hero">
+        <div class="heroLabel" id="heroLabel"></div>
+        <div class="heroNum" id="heroNum"></div>
+        <div class="heroSub" id="heroSub"></div>
+      </div>
       <div class="big">
         <div class="num" id="pct">1.25<small>%</small></div>
         <div class="what" id="what">MEKP by weight of resin</div>
@@ -541,22 +551,24 @@ function render(){
   $("ratioCtl").hidden=!!fixedMsg;$("ratioFixed").hidden=!fixedMsg;if(fixedMsg)$("ratioFixed").textContent=fixedMsg;
 
   if(custom&&(!(parseFloat(custOf().epl)>0)||(kind==="epoxy"&&!(parseFloat(custOf().ratio)>0)))){bump("warn",T("Data sheet figures needed","Need the sheet numbers"));notes.push(["warn",T("Enter the ratio and pot life from this system's data sheet. Until then the figures shown use placeholder values.","Type in the numbers off the sheet. Till then these are made up.")])}
-  let html="";
+  let html="";const hero={label:"",num:"",sub:"",gel:null,work:null};
   if(kind==="epoxy"){
     let hardAmt,potRef,big,small,what,resinTxt;
     if(custom){const r=Math.max(0,parseFloat(custOf().ratio)||0),hg=massG*r/100;hardAmt=`${fmt(hg,hg<100?1:0)} g`;resinTxt=`${fmt(massG,0)} g`;potRef=Math.max(1,parseFloat(custOf().epl)||20)*Math.pow(2,(25-t)/10);big=fmt(r,0);small=":100";what=T("Hardener to resin, by weight","Hardener to resin, by weight. Off your sheet.")}
     else{const v=volML/hd.ratio;hardAmt=`${fmt(v,v<100?1:0)} ml`;resinTxt=`${fmt(volML,0)} ml`;potRef=hd.pot*Math.pow(2,(22-t)/10);big=hd.ratio;small=":1";what=T("Resin to hardener, by volume","Resin to hardener, by volume. No freelancing.")}
     const pl=potRef*massF(massG*1.2);
     $("pct").innerHTML=`${big}<small>${small}</small>`;$("what").innerHTML=what+chip(custom?"user":"data");
-    html=`<div><dt>Resin</dt><dd>${resinTxt}</dd></div><div><dt>Hardener</dt><dd>${hardAmt}</dd></div>`+
-         `<div><dt>${T("Typical pot life","Cooks in the cup")}${chip(custom?"user":hd.est?"est":"data")}</dt><dd>${dur(pl)}<small>${span(pl)}</small></dd></div><div><dt>${T("Typical spread thin","Spread out")}${chip("est")}</dt><dd>${dur(pl*2.5)}<small>${T("roughly","ish")}</small></dd></div>`;
+    html=`<div><dt>Resin</dt><dd>${resinTxt}</dd></div><div><dt>Hardener</dt><dd>${hardAmt}</dd></div>`;
+    Object.assign(hero,{label:T("Typical pot life in the cup","Cooks in the cup in")+chip(custom?"user":hd.est?"est":"data"),num:dur(pl),
+      sub:T(`Range ${span(pl)}. Spread thin in a tray, roughly ${dur(pl*2.5)}`,`Somewhere ${span(pl)}. Spread out in a tray, about ${dur(pl*2.5)}`)+chip("est"),work:pl});
     notes.push(["",T("Pot life scales from the data sheet figure, halving for every 10 °C rise. Spread into a roller tray, the working time runs well past the cup figure.","Pot life halves every 10 °C. Tip it into a roller tray and it lasts way longer. Leave it in the cup and it cooks, smokes and sets like a brick.")]);
   }else if(kind==="mma"){
     const w=custom?Math.max(1,parseFloat(custOf().epl)||10)*Math.pow(2,(25-t)/10):hd.work*Math.pow(2,(22-t)/10);
     const act=volML/10;
     $("pct").innerHTML=`10<small>:1</small>`;$("what").innerHTML=T("Adhesive to activator, by volume","Glue to activator, by volume")+chip("data");
-    html=`<div><dt>${T("Adhesive","Glue")}</dt><dd>${fmt(volML,0)} ml</dd></div><div><dt>Activator</dt><dd>${fmt(act,act<100?1:0)} ml</dd></div>`+
-         `<div><dt>${T("Typical working time","Clamp within")}${chip(custom?"user":"data")}</dt><dd>${dur(w)}<small>${span(w)}</small></dd></div><div><dt>${T("Typical fixture time","Hands off for")}${chip(custom?"est":"data")}</dt><dd>${dur(w*2.7)}<small>${T("roughly","ish")}</small></dd></div>`;
+    html=`<div><dt>${T("Adhesive","Glue")}</dt><dd>${fmt(volML,0)} ml</dd></div><div><dt>Activator</dt><dd>${fmt(act,act<100?1:0)} ml</dd></div>`;
+    Object.assign(hero,{label:T("Typical working time","Clamp within")+chip(custom?"user":"data"),num:dur(w),
+      sub:T(`Range ${span(w)}. Fixture in roughly ${dur(w*2.7)}`,`Somewhere ${span(w)}. Then hands off for about ${dur(w*2.7)}`)+chip(custom?"est":"data"),work:w});
     notes.push(["",T("Cartridges meter the ratio for you. The amounts are for bulk packs dispensed by hand.","Cartridges do the ratio for you. These numbers are for the bulk-pack heroes.")]);
   }else{
     const rec=ratioAt(p,t,rh);
@@ -583,12 +595,12 @@ function render(){
     $("what").innerHTML=(shopMode()?`${manual?"What you've set":"What you should use"}: ${kind==="bpo"?"cream":"kicker"} by weight of ${p.cat==="paste"?"paste":"resin"}`:`${manual?"Your setting":"Typical"}: ${kind==="bpo"?"BPO cream":"MEKP"} by weight of ${p.cat==="paste"?"paste":"resin"}`)+(state.manual!=null&&Math.abs(pct-rec)>0.001?"":chip(ratioK));
     const cold=t<minT;
     const gelL=T("Typical gel time","Goes off in"),workL=kind==="bpo"?T("Typical spreading time","Spread it in"):T("Typical working time","You've got");
-    const tc=cold?`<div><dt>${gelL}</dt><dd>${T("Unreliable","Not happening")}<small>${T("too cold to cure","too bloody cold")}</small></dd></div><div><dt>${workL}</dt><dd>–</dd></div>`
-      :`<div><dt>${gelL}${chip(timeK)}</dt><dd>${dur(gt)}<small>${span(gt)}</small></dd></div><div><dt>${workL}${chip("est")}</dt><dd>${dur(gt*0.75)}<small>${T("about ¾ of gel time","then it's rubbish")}</small></dd></div>`;
+    Object.assign(hero,cold?{label:workL,num:T("Unreliable","Not happening"),sub:T("Too cold for this product to cure properly.","Too bloody cold. Nothing's curing.")}
+      :{label:workL+chip("est"),num:dur(gt*0.75),sub:T(`Gels in about ${dur(gt)} (range ${span(gt)})`,`Goes off in about ${dur(gt)} (somewhere ${span(gt)})`)+chip(timeK),gel:gt,work:gt*0.75});
     if(kind==="mekp"){
       const ml=g/1.17,drops=Math.round(ml*20);
-      html=`<div><dt>${T("Weight","Weigh out")}</dt><dd>${fmt(g,g<100?1:0)} g</dd></div><div><dt>${T("Volume","Or measure")}</dt><dd>${fmt(ml,ml<100?1:0)} ml${ml<5?`<small>≈ ${drops} ${T("drops","drops, if your hands don't shake")}</small>`:""}</dd></div>`+tc;
-    }else html=`<div><dt>${T("Cream","Squeeze out")}</dt><dd>${fmt(g,g<100?1:0)} g</dd></div><div><dt>${T("Total","All in")}</dt><dd>${fmt(massG+g,0)} g</dd></div>`+tc;
+      html=`<div><dt>${T("Weight","Weigh out")}</dt><dd>${fmt(g,g<100?1:0)} g</dd></div><div><dt>${T("Volume","Or measure")}</dt><dd>${fmt(ml,ml<100?1:0)} ml${ml<5?`<small>≈ ${drops} ${T("drops","drops, if your hands don't shake")}</small>`:""}</dd></div>`;
+    }else html=`<div><dt>${T("Cream","Squeeze out")}</dt><dd>${fmt(g,g<100?1:0)} g</dd></div><div><dt>${T("Total","All in")}</dt><dd>${fmt(massG+g,0)} g</dd></div>`;
     {
       const srcs=[p.src?T(`gel figure from ${p.src}`,`gel figure off the ${p.src}`):T("gel figure is typical for this product type","gel figure is a guess for this kind of stuff"),hd.est?T(`${hd.name} speed is a typical estimate`,`${hd.name} speed is a guess too`):null].filter(Boolean);
       notes.push(["",T(`Times can be out by a third either way between brands (${srcs.join("; ")}). Check them against your product's TDS.`,`Times can be a third out either way depending on the brand (${srcs.join("; ")}). The TDS knows better than both of us.`)]);
@@ -604,11 +616,13 @@ function render(){
   if(!(b>0)){html=`<div style="grid-column:1/-1"><dt>${T("Batch","How much")}</dt><dd>${T("Enter a batch size above zero","Type in how much you're mixing, genius")}</dd></div>`;bump("warn",T("Batch size needed","How much, though?"))}
   notes.unshift(["",T(p.note,p.shop)]);
   $("amounts").innerHTML=html;
+  $("heroLabel").innerHTML=hero.label;$("heroNum").textContent=hero.num;$("heroSub").innerHTML=hero.sub;
+  const he=$("hero");he.dataset.gel=hero.gel??"";he.dataset.work=hero.work??"";
   $("notes").innerHTML=notes.map(([c,n])=>`<li class="${c}">${n}</li>`).join("");
   const s=$("status");s.className="status "+level;s.textContent=label;
   const qp=$("quip");qp.hidden=!shopMode();
   if(shopMode()){if(quipLevel!==level){const a=QUIPS[level];quipText=a[Math.floor(Math.random()*a.length)];quipLevel=level}qp.textContent=quipText}
-  $("pct").style.color=level==="crit"?"var(--crit)":"var(--accent)";
+  $("heroNum").style.color=level==="crit"?"var(--crit)":"var(--accent)";
   try{localStorage.setItem("lcc-v6",JSON.stringify(state))}catch(e){}
 }
 

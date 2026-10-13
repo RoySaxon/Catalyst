@@ -22,7 +22,8 @@ function run(c) {
   if (c.pct != null) { $("pctR").value = c.pct; fire($("pctR"), "input"); }
   const cells = Object.fromEntries([...d.querySelectorAll("#amounts div")].map(x =>
     [x.querySelector("dt").childNodes[0].textContent.trim(), x.querySelector("dd").childNodes[0].textContent.trim()]));
-  return { status: $("status").textContent, status_cls: $("status").className, ratio: $("pct").textContent, cells,
+  const hero = $("hero").dataset;
+  return { gel: +(+hero.gel).toFixed(1), work: +(+hero.work).toFixed(1), heroNum: $("heroNum").textContent, status: $("status").textContent, status_cls: $("status").className, ratio: $("pct").textContent, cells,
     hard: [...d.querySelectorAll("#hardeners input")].map(x => x.value) };
 }
 const minutes = s => { const h = /(\d+) h(?: (\d+))?/.exec(s); if (h) return +h[1] * 60 + +(h[2] || 0); return parseFloat(s); };
@@ -55,7 +56,7 @@ const ref = [
   ["Crestabond M1-05, 22 °C (TDS 4 to 7 min)", { p: "mma", h: "mma5", t: 22 }, "Typical working time", 5.5]
 ];
 for (const [name, c, cell, val, tol = 0.2] of ref) {
-  const r = run(c); within(name, minutes(r.cells[cell]), +(val * (1 - tol)).toFixed(1), +(val * (1 + tol)).toFixed(1));
+  const r = run(c); within(name, cell === "Typical gel time" ? r.gel : r.work, +(val * (1 - tol)).toFixed(1), +(val * (1 + tol)).toFixed(1));
 }
 
 // Arithmetic: catalyst weight = batch x ratio
@@ -115,6 +116,14 @@ ok("MMA offers its own activators only", run({ p: "mma" }).hard.every(h => h.sta
   ok("Hardener card shows the chosen grade and its details", $("hardBtn").textContent.includes("Butanox LPT-IN") && $("hardBtn").textContent.includes("Extra slow"));
   run({ p: "bog" });
   ok("Single-hardener products do not open a list", ($("hardBtn").click(), $("hardeners").hidden === true));
+}
+
+// Working time is the headline
+{
+  const r = run({ p: "ortho", h: "m50", t: 23, pct: 1 });
+  ok("Headline shows working time, about three quarters of gel time", Math.abs(r.work - r.gel * 0.75) < 0.2 && r.heroNum.includes("min"), `${r.heroNum}, gel ${r.gel}`);
+  ok("Headline says unreliable when too cold", run({ p: "gelc", h: "n925h", t: 12 }).heroNum === "Unreliable");
+  ok("Epoxy headline is cup pot life", run({ p: "epoxy", h: "w205", t: 22, b: 83 }).heroNum === "11 min");
 }
 
 console.log(`\n${pass} passed, ${fail} failed`);
